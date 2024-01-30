@@ -79,11 +79,15 @@ For now, just have it print out the statement:
 # ADD YOUR CODE FOR PLAY HERE
 import simpleaudio as sa
 
+
 # This is a test sound file
 filename = './sounds/toaster.wav'
 wave_obj = sa.WaveObject.from_wave_file(filename)
 play_obj = wave_obj.play()
 play_obj.wait_done()  # Wait until sound has finished playing
+
+if sys.argv[1] == './sounds/toaster.wav':
+    print(f"I am now playing {filename}")
 
 
 '''
