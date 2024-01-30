@@ -81,15 +81,27 @@ import simpleaudio as sa
 
 
 # This is a test sound file
-filename = './sounds/toaster.wav'
-wave_obj = sa.WaveObject.from_wave_file(filename)
-play_obj = wave_obj.play()
-play_obj.wait_done()  # Wait until sound has finished playing
+# filename = './sounds/toaster.wav'
+# wave_obj = sa.WaveObject.from_wave_file(filename)
+# play_obj = wave_obj.play()
+# play_obj.wait_done()  # Wait until sound has finished playing
 
-if sys.argv[1] == './sounds/toaster.wav':
-    print(f"I am now playing {filename}")
+import os
 
+# Assuming sys.argv[1] is the filepath
+filepath = sys.argv[1]
 
+# Get the file extension
+_, file_extension = os.path.splitext(filepath)
+
+# Check if the file extension is .wav
+if file_extension == '.wav':
+    print(f"I am now playing {filepath}")
+    wave_obj = sa.WaveObject.from_wave_file(filepath)
+    play_obj = wave_obj.play()
+    play_obj.wait_done()  # Wait until sound has finished playing
+else:
+    print("The provided file is not a .wav file")
 '''
 This goes at the end of all of your if statements and it lets you know if you have 
 unknown or unaddressed command line arguments.
