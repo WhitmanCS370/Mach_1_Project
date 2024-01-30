@@ -6,5 +6,5 @@
 - Marlyn
 - Clara
 
-Progress:
+## Progress Sumary
 We have implemented the simple command line interface to play an audio file (3.D.1)
