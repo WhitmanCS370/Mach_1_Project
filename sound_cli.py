@@ -1,17 +1,22 @@
 import os
 import sys
 
+# TODO: Delete the line below and other comments that restate the code
 #import command and simple audio
 import Commands as cd
 import simpleaudio as sa
+
+# TODO: Write Python docstrings. See https://peps.python.org/pep-0257/
 
 #Function to check if the sound file has a .wav estension 
 def check_extension(sound):
     return sound.endswith(".wav")
 
+# COMMENT: This is a good function to have!
 #Function that prints help message if the arguments are incorrect
 def print_help():
     if len(sys.argv) > 2:
+        # TODO: The line below is duplicated in several places. Consider consolitating.
         print(f"Unrecognized command: {sys.argv[2]} Please just use the following format: -h or --help.")
         sys.exit(1)
 
@@ -29,6 +34,7 @@ def list_sounds():
     for sound in os.listdir("./sounds"):
         print(sound)
 
+# TODO: Avoid global variables
 #List to store play objects for each sound played
 play_objects = []
 
@@ -38,6 +44,7 @@ def play_sound(sound):
     play_obj = wave_obj.play()
     play_objects.append(play_obj)
 
+# TODO: Consider whether this long function should be refactored. See also my comment about usability on Canvas.
 #Function that handdles different comand lines to play the sounds
 def play_sound_arg():
     #check if the command line arguments are less than 3
@@ -92,6 +99,7 @@ def rename_sound_arg():
 
 #maps command line to corresponding function
 if __name__ == "__main__":
+    # NOTE: VERY clever! I wonder if there's some way to put the contents of the Command module in the same place as this info.
     commands = {
         "-h": print_help,
         "--help": print_help,
@@ -103,6 +111,8 @@ if __name__ == "__main__":
         "--rename": rename_sound_arg
     }
 
+
+    # NOTE: I love how short this is!
     #executes the function based on the command line
     try:
         command = sys.argv[1]
