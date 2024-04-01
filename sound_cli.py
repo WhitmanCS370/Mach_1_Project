@@ -92,7 +92,7 @@ def rename_sound_arg():
     else:
         print("Invalid sound file format. Please use a .wav file.")
 
-def random_snippets(sound):
+def random_snippet(sound):
     with wave.open(sound, 'rb') as sound_wav:
         num_frames = sound_wav.getnframes()
         frame_rate = sound_wav.getframerate()
@@ -119,6 +119,26 @@ def random_snippets(sound):
     #Play snippet
     play_obj = snippet_wave_obj.play()
     play_obj.wait_done()
+
+def random_snippet_arg():
+    # Check if the command line arguments are less than 3
+    if len(sys.argv) < 3:
+        print("Invalid number of arguments. Please use the following format: -rev <sound>.")
+        sys.exit(1)
+    
+    # Extract the sound file path from the command line
+    sound = sys.argv[2]
+
+    # Check if the file has a valid .wav extension 
+    if check_extension(sound):
+        sound_snippet = random_snippet(sound)
+        
+        # Play the reversed sound
+        play_obj = sound_snippet.play()
+        play_obj.wait_done()
+    else:
+        print("Invalid sound file format. Please use a .wav file.")
+
 
 #maps command line to corresponding function
 if __name__ == "__main__":
