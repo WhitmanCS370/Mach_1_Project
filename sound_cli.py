@@ -114,7 +114,7 @@ def random_snippet(sound):
         snippet_audio_data = sound_wav.readframes(int(snippet_duration*frame_rate))
     
     #Create the wave objection with snippet
-    snippet_wave_obj = sa.WaveObject(snippet_audio_data, num_channels=wav_file.getnchannels(), bytes_per_sample=sample_width, sample_rate=frame_rate)
+    snippet_wave_obj = sa.WaveObject(snippet_audio_data, num_channels=sound_wav.getnchannels(), bytes_per_sample=sample_width, sample_rate=frame_rate)
 
     #Play snippet
     play_obj = snippet_wave_obj.play()
@@ -150,7 +150,8 @@ if __name__ == "__main__":
         "-p": play_sound_arg,
         "--play": play_sound_arg,
         "-r": rename_sound_arg,
-        "--rename": rename_sound_arg
+        "--rename": rename_sound_arg,
+        "-rand":random_snippet_arg
     }
 
     #executes the function based on the command line
