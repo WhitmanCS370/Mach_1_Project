@@ -96,45 +96,47 @@ def play_back_speed(sound_file, speed):
     with wave.open(sound_file, 'rb') as wav_file:
         # Get the audio parameters
         frame_rate = wav_file.getframerate()
-        if speed == "increase":
+        num_channels = wav_file.getnchannels()
+        sample_width = wav_file.getsampwidth()
+        if speed == "-fast":
             new_frame_rate = int(frame_rate*2)
-            return new_frame_rate
-        elif speed == "decrease":
+        elif speed == "-slow":
             new_frame_rate = int(frame_rate/2)
-            return new_frame_rate
         else:
             print("Not a valid input")
-            
+        frames = wav_file.readframes(wav_file.getnframes())
+        modified_wave_obj = sa.WaveObject(frames, num_channels, sample_width, new_frame_rate)
+        return modified_wave_obj
+
 def playback_speed_arg():
-    # Check if the command line arguments are less than 3
-    if len(sys.argv) < 3:
-        print("Invalid number of arguments. Please use the following format: -p <sound> or --play <sound>.")
+    # Check if the command line arguments are less than 4
+    if len(sys.argv) < 4:
+        print("Invalid number of arguments. Please use the following format: -speed <option> <sound>.")
         sys.exit(1)
 
-    # Extract the command line arguments
-    sound = sys.argv[2]
-    speed_option = None
-
-    # Check if additional options are provided
-    if len(sys.argv) >= 4:
-        speed_option = sys.argv[3]
+    # Extract the speed option and sound file path from the command line
+    speed_option = sys.argv[2]
+    sound = sys.argv[3]
 
     # Check if the file has a valid .wav extension 
     if check_extension(sound):
-        # Determine playback speed
-        frame_rate = sa.DEFAULT_SAMPLE_RATE  # Default frame rate
-        if speed_option == "-fast":
-            frame_rate *= 2  # Double the frame rate for fast playback
-        elif speed_option == "-slow":
-            frame_rate //= 2  # Halve the frame rate for slow playback
+        # Determine playback speed based on the speed option
+        if speed_option not in ["-fast", "-slow"]:
+            print("Invalid speed option. Please use -fast or -slow.")
+            sys.exit(1)
 
-        # Create WaveObject and play sound with the specified playback speed
-        wave_obj = sa.WaveObject.from_wave_file(sound)
-        play_obj = wave_obj.play()
-        play_obj.set_speed(frame_rate / sa.DEFAULT_SAMPLE_RATE)  # Adjust playback speed
-        play_obj.wait_done()
+        # Modify the playback speed of the audio
+        modified_wave_obj = play_back_speed(sound, speed_option)
+
+        if modified_wave_obj:
+            # Play the modified audio
+            play_obj = modified_wave_obj.play()
+            play_obj.wait_done()
+        else:
+            print("Failed to modify the playback speed.")
     else:
         print("Invalid sound file format. Please use a .wav file.")
+
 
 #maps command line to corresponding function
 if __name__ == "__main__":
