@@ -94,7 +94,7 @@ def rename_sound_arg():
 
 def play_back_speed(sound_file, speed):
     with wave.open(sound_file, 'rb') as wav_file:
-        # Get the audio parameters
+        #Get the audio parameters
         frame_rate = wav_file.getframerate()
         num_channels = wav_file.getnchannels()
         sample_width = wav_file.getsampwidth()
@@ -104,32 +104,34 @@ def play_back_speed(sound_file, speed):
             new_frame_rate = int(frame_rate/2)
         else:
             print("Not a valid input")
+
+        #Read all frames from wave object    
         frames = wav_file.readframes(wav_file.getnframes())
+
+        #Create new wav object with the new frame rate
         modified_wave_obj = sa.WaveObject(frames, num_channels, sample_width, new_frame_rate)
+        
         return modified_wave_obj
 
 def playback_speed_arg():
-    # Check if the command line arguments are less than 4
     if len(sys.argv) < 4:
         print("Invalid number of arguments. Please use the following format: -speed <option> <sound>.")
         sys.exit(1)
 
-    # Extract the speed option and sound file path from the command line
     speed_option = sys.argv[2]
     sound = sys.argv[3]
 
-    # Check if the file has a valid .wav extension 
     if check_extension(sound):
-        # Determine playback speed based on the speed option
+        #Determine playback speed based on the speed option
         if speed_option not in ["-fast", "-slow"]:
             print("Invalid speed option. Please use -fast or -slow.")
             sys.exit(1)
 
-        # Modify the playback speed of the audio
+        #Modify the playback speed of the audio
         modified_wave_obj = play_back_speed(sound, speed_option)
 
         if modified_wave_obj:
-            # Play the modified audio
+            #Play the modified audio
             play_obj = modified_wave_obj.play()
             play_obj.wait_done()
         else:
