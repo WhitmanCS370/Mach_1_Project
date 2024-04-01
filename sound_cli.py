@@ -98,48 +98,62 @@ def random_snippet(sound):
         frame_rate = sound_wav.getframerate()
         sample_width = sound_wav.getsampwidth()
 
-        #Calculate snippet duration
-        length_sound = len(sound)
-        snippet_duration = random.uniform(1, length_sound)
-        
-        #Calculate maximum start time for the snippet
-        max_start_time = (num_frames - snippet_duration * frame_rate) / frame_rate
-        start_time = random.uniform(0, max_start_time)
+        #Calculate maximum snippet duration (in seconds)
+        max_snippet_duration = num_frames / frame_rate
 
-        #Convert start time to the frame index
-        start_frame = int(start_time*frame_rate)
+        #Get random start time for the snippet
+        start_time = random.uniform(0, max_snippet_duration - 0.5)
 
-        #Readjust position in wav file
+        #Calculate maximum number of frames for the snippet
+        max_snippet_frames = min(num_frames, int((max_snippet_duration - start_time) * frame_rate))
+
+        #Get random end time for the snippet
+        end_time = random.uniform(start_time + 1, max_snippet_duration)
+
+        #Convert start and end to frame indices
+        start_frame = int(start_time * frame_rate)
+        end_frame = int(end_time * frame_rate)
+
+        #Adjust position in wav file
         sound_wav.setpos(start_frame)
-        snippet_audio_data = sound_wav.readframes(int(snippet_duration*frame_rate))
-    
-    #Create the wave objection with snippet
-    snippet_wave_obj = sa.WaveObject(snippet_audio_data, num_channels=sound_wav.getnchannels(), bytes_per_sample=sample_width, sample_rate=frame_rate)
 
-    #Play snippet
-    play_obj = snippet_wave_obj.play()
-    play_obj.wait_done()
+        snippet_audio_data = sound_wav.readframes(end_frame - start_frame)
+
+    snippet_wave_obj = sa.WaveObject(snippet_audio_data, num_channels=sound_wav.getnchannels(),
+                                      bytes_per_sample=sample_width, sample_rate=frame_rate)
+
+    return snippet_wave_obj
 
 def random_snippet_arg():
     # Check if the command line arguments are less than 3
     if len(sys.argv) < 3:
-        print("Invalid number of arguments. Please use the following format: -rev <sound>.")
+        print("Invalid number of arguments. Please use the following format: -rand <sound>.")
         sys.exit(1)
     
     # Extract the sound file path from the command line
     sound = sys.argv[2]
 
     # Check if the file has a valid .wav extension 
-    if check_extension(sound):
-        sound_snippet = random_snippet(sound)
-        
-        # Play the reversed sound
-        play_obj = sound_snippet.play()
-        play_obj.wait_done()
-    else:
+    if not check_extension(sound):
         print("Invalid sound file format. Please use a .wav file.")
+        sys.exit(1)
 
-
+    try:
+        sound_snippet = random_snippet(sound)
+        if sound_snippet is not None:
+            print("Snippet created successfully.")
+            # Play the snippet
+            play_obj = sound_snippet.play()
+            if play_obj is not None:
+                print("Playing snippet...")
+                play_obj.wait_done()
+                print("Snippet playback completed.")
+            else:
+                print("Error: Play object is None.")
+        else:
+            print("Error: Snippet creation failed.")
+    except Exception as e:
+        print(f"Error occurred: {e}")
 #maps command line to corresponding function
 if __name__ == "__main__":
     commands = {
