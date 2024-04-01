@@ -1,5 +1,7 @@
 import os
 import sys
+import wave
+import audioop
 
 #import command and simple audio
 import Commands as cd
@@ -90,6 +92,50 @@ def rename_sound_arg():
     else:
         print("Invalid sound file format. Please use a .wav file.")
 
+def play_back_speed(sound_file, speed):
+    with wave.open(sound_file, 'rb') as wav_file:
+        # Get the audio parameters
+        frame_rate = wav_file.getframerate()
+        if speed == "increase":
+            new_frame_rate = int(frame_rate*2)
+            return new_frame_rate
+        elif speed == "decrease":
+            new_frame_rate = int(frame_rate/2)
+            return new_frame_rate
+        else:
+            print("Not a valid input")
+            
+def playback_speed_arg():
+    # Check if the command line arguments are less than 3
+    if len(sys.argv) < 3:
+        print("Invalid number of arguments. Please use the following format: -p <sound> or --play <sound>.")
+        sys.exit(1)
+
+    # Extract the command line arguments
+    sound = sys.argv[2]
+    speed_option = None
+
+    # Check if additional options are provided
+    if len(sys.argv) >= 4:
+        speed_option = sys.argv[3]
+
+    # Check if the file has a valid .wav extension 
+    if check_extension(sound):
+        # Determine playback speed
+        frame_rate = sa.DEFAULT_SAMPLE_RATE  # Default frame rate
+        if speed_option == "-fast":
+            frame_rate *= 2  # Double the frame rate for fast playback
+        elif speed_option == "-slow":
+            frame_rate //= 2  # Halve the frame rate for slow playback
+
+        # Create WaveObject and play sound with the specified playback speed
+        wave_obj = sa.WaveObject.from_wave_file(sound)
+        play_obj = wave_obj.play()
+        play_obj.set_speed(frame_rate / sa.DEFAULT_SAMPLE_RATE)  # Adjust playback speed
+        play_obj.wait_done()
+    else:
+        print("Invalid sound file format. Please use a .wav file.")
+
 #maps command line to corresponding function
 if __name__ == "__main__":
     commands = {
@@ -100,7 +146,8 @@ if __name__ == "__main__":
         "-p": play_sound_arg,
         "--play": play_sound_arg,
         "-r": rename_sound_arg,
-        "--rename": rename_sound_arg
+        "--rename": rename_sound_arg,
+        "-speed": playback_speed_arg
     }
 
     #executes the function based on the command line
