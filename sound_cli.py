@@ -1,5 +1,7 @@
 import os
 import sys
+import random
+import wave
 
 #import command and simple audio
 import Commands as cd
@@ -89,6 +91,34 @@ def rename_sound_arg():
         os.rename(f"{sound}", f"{new_name}")
     else:
         print("Invalid sound file format. Please use a .wav file.")
+
+def random_snippets(sound):
+    with wave.open(sound, 'rb') as sound_wav:
+        num_frames = sound_wav.getnframes()
+        frame_rate = sound_wav.getframerate()
+        sample_width = sound_wav.getsampwidth()
+
+        #Calculate snippet duration
+        length_sound = len(sound)
+        snippet_duration = random.uniform(1, length_sound)
+        
+        #Calculate maximum start time for the snippet
+        max_start_time = (num_frames - snippet_duration * frame_rate) / frame_rate
+        start_time = random.uniform(0, max_start_time)
+
+        #Convert start time to the frame index
+        start_frame = int(start_time*frame_rate)
+
+        #Readjust position in wav file
+        sound_wav.setpos(start_frame)
+        snippet_audio_data = sound_wav.readframes(int(snippet_duration*frame_rate))
+    
+    #Create the wave objection with snippet
+    snippet_wave_obj = sa.WaveObject(snippet_audio_data, num_channels=wav_file.getnchannels(), bytes_per_sample=sample_width, sample_rate=frame_rate)
+
+    #Play snippet
+    play_obj = snippet_wave_obj.play()
+    play_obj.wait_done()
 
 #maps command line to corresponding function
 if __name__ == "__main__":
