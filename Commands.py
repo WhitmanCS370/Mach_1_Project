@@ -7,4 +7,6 @@ COMMANDS = {
     "-p or --play (-sm or -sq) <sound>": "Plays a sound file, -sm plays multiple sounds at the same time, -sq plays sounds sequentially",
     "-r or --rename <sound> <new_name>": "Renames a sound file",
     "-rand <sound>": "Play a random snippet of a sound file"
+    "-speed (-fast or -slow) <sound>": "Plays a sound, -fast plays sound at double speed, -slow plays sound at half speed"
+    "-rev":"Plays a sound file in reverse"
 }
