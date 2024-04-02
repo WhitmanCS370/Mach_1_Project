@@ -40,7 +40,7 @@ def play_sound(sound):
     play_obj = wave_obj.play()
     play_objects.append(play_obj)
 
-#Function that handdles different comand lines to play the sounds
+#Function that handles different command lines to play the sounds
 def play_sound_arg():
     #check if the command line arguments are less than 3
     if len(sys.argv) < 3:
@@ -136,6 +136,43 @@ def playback_speed_arg():
             play_obj.wait_done()
         else:
             print("Failed to modify the playback speed.")
+
+def reverse_sound(sound_file):
+    with wave.open(sound_file, 'rb') as wav_file:
+        # Get the audio parameters
+        num_channels = wav_file.getnchannels()
+        sample_width = wav_file.getsampwidth()
+        frame_rate = wav_file.getframerate()
+        num_frames = wav_file.getnframes()
+
+        # Read the audio data
+        audio_data = wav_file.readframes(num_frames)
+
+    # Reverse the audio data using audioop
+    reversed_audio_data = audioop.reverse(audio_data, sample_width)
+
+    return reversed_audio_data, num_channels, sample_width, frame_rate
+
+def reverse_sound_arg():
+    # Check if the command line arguments are less than 3
+    if len(sys.argv) < 3:
+        print("Invalid number of arguments. Please use the following format: -rev <sound>.")
+        sys.exit(1)
+    
+    # Extract the sound file path from the command line
+    sound = sys.argv[2]
+
+    # Check if the file has a valid .wav extension 
+    if check_extension(sound):
+        # Reverse the sound
+        reversed_audio_data, num_channels, sample_width, frame_rate = reverse_sound(sound)
+
+        # Create a WaveObject with the reversed audio data
+        reversed_wave_obj = sa.WaveObject(reversed_audio_data, num_channels, sample_width, frame_rate)
+
+        # Play the reversed sound
+        play_obj = reversed_wave_obj.play()
+        play_obj.wait_done()
     else:
         print("Invalid sound file format. Please use a .wav file.")
 
@@ -152,6 +189,7 @@ if __name__ == "__main__":
         "-r": rename_sound_arg,
         "--rename": rename_sound_arg,
         "-speed": playback_speed_arg
+        "-rev": reverse_sound_arg
     }
 
     #executes the function based on the command line
@@ -165,3 +203,5 @@ if __name__ == "__main__":
     # after all commands have been processed, wait for all sounds to finish
     for play_obj in play_objects:
         play_obj.wait_done()
+
+
