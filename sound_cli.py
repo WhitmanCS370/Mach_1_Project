@@ -92,6 +92,51 @@ def rename_sound_arg():
     else:
         print("Invalid sound file format. Please use a .wav file.")
 
+def play_back_speed(sound_file, speed):
+    with wave.open(sound_file, 'rb') as wav_file:
+        #Get the audio parameters
+        frame_rate = wav_file.getframerate()
+        num_channels = wav_file.getnchannels()
+        sample_width = wav_file.getsampwidth()
+        if speed == "-fast":
+            new_frame_rate = int(frame_rate*2)
+        elif speed == "-slow":
+            new_frame_rate = int(frame_rate/2)
+        else:
+            print("Not a valid input")
+
+        #Read all frames from wave object    
+        frames = wav_file.readframes(wav_file.getnframes())
+
+        #Create new wav object with the new frame rate
+        modified_wave_obj = sa.WaveObject(frames, num_channels, sample_width, new_frame_rate)
+        
+        return modified_wave_obj
+
+def playback_speed_arg():
+    if len(sys.argv) < 4:
+        print("Invalid number of arguments. Please use the following format: -speed <option> <sound>.")
+        sys.exit(1)
+
+    speed_option = sys.argv[2]
+    sound = sys.argv[3]
+
+    if check_extension(sound):
+        #Determine playback speed based on the speed option
+        if speed_option not in ["-fast", "-slow"]:
+            print("Invalid speed option. Please use -fast or -slow.")
+            sys.exit(1)
+
+        #Modify the playback speed of the audio
+        modified_wave_obj = play_back_speed(sound, speed_option)
+
+        if modified_wave_obj:
+            #Play the modified audio
+            play_obj = modified_wave_obj.play()
+            play_obj.wait_done()
+        else:
+            print("Failed to modify the playback speed.")
+
 def reverse_sound(sound_file):
     with wave.open(sound_file, 'rb') as wav_file:
         # Get the audio parameters
@@ -143,6 +188,7 @@ if __name__ == "__main__":
         "--play": play_sound_arg,
         "-r": rename_sound_arg,
         "--rename": rename_sound_arg,
+        "-speed": playback_speed_arg
         "-rev": reverse_sound_arg
     }
 
