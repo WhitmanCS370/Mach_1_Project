@@ -247,8 +247,8 @@ if __name__ == "__main__":
         "--play": play_sound_arg,
         "-r": rename_sound_arg,
         "--rename": rename_sound_arg,
-        "-rand":random_snippet_arg
-        "-speed": playback_speed_arg
+        "-rand":random_snippet_arg,
+        "-speed": playback_speed_arg,
         "-rev": reverse_sound_arg
     }
 
