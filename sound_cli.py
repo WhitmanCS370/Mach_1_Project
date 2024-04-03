@@ -270,6 +270,14 @@ def playback_speed_arg():
             print("Failed to modify the playback speed.")
 
 def reverse_sound(sound):
+    """ Reverses audio data
+    
+    Parameters:
+        sound: an audio file with .wav extension
+    
+    Returns:
+        tuple: A tutple containing the reversed audio data and audio parameters
+    """
     with wave.open(sound, 'rb') as wav_file:
         # Get the audio parameters
         num_channels = wav_file.getnchannels()
