@@ -18,8 +18,14 @@ def check_extension(sound):
     """
     return sound.endswith(".wav")
 
-#Function that prints help message if the arguments are incorrect
 def print_help():
+    """ Prints help message if  arguments for specific command are incorrect
+
+    Parameters:
+        None
+    Returns:
+        None
+    """
     if len(sys.argv) > 2:
         print(f"Unrecognized command: {sys.argv[2]} Please just use the following format: -h or --help.")
         sys.exit(1)
