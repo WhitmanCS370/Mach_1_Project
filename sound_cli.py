@@ -107,9 +107,15 @@ def play_sound_arg():
         print("Invalid command. Please use type -p -sm or -p -sq.")
         exit(1)
 
-#function renames a sound file
 def rename_sound(sound):
-    #replace "_" and ".wav" with spaces and 
+    """ Creates a more readable sound file name by replacing "_" and ".wav" with spaces 
+
+    Parameters: 
+        sound: an audio file object with .wav extension
+    
+    Returns:
+        sound: the renamed sound
+    """
     return sound.replace("_", " ").replace(".wav", "")
 
 def rename_sound_arg():
