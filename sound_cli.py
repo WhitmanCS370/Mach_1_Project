@@ -201,13 +201,25 @@ def random_snippet_arg():
         print("Invalid number of arguments. Please use the following format: -rand <sound>.")
         
 def play_back_speed(sound, speed):
+    """ Increases speed of a sound file by 2 or decreases speed by half
+    
+    Parameters:
+        sound: an audio file with .wav extension
+        speed: either "-fast" to increase speed or "-slow" to decrease playback speed
+    
+    Returns:
+        obj: new wav object with the new frame rate that increases or decreases playback speed
+    """
     with wave.open(sound, 'rb') as wav_file:
         #Get the audio parameters
         frame_rate = wav_file.getframerate()
         num_channels = wav_file.getnchannels()
         sample_width = wav_file.getsampwidth()
+
+        #increases frame rate by 2 if flag "-fast" provided
         if speed == "-fast":
             new_frame_rate = int(frame_rate*2)
+        #decreases frame rate by 2 if flag "-slow" provided
         elif speed == "-slow":
             new_frame_rate = int(frame_rate/2)
         else:
