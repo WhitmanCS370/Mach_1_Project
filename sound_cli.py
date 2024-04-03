@@ -200,8 +200,8 @@ def random_snippet_arg():
     if len(sys.argv) < 3:
         print("Invalid number of arguments. Please use the following format: -rand <sound>.")
         
-def play_back_speed(sound_file, speed):
-    with wave.open(sound_file, 'rb') as wav_file:
+def play_back_speed(sound, speed):
+    with wave.open(sound, 'rb') as wav_file:
         #Get the audio parameters
         frame_rate = wav_file.getframerate()
         num_channels = wav_file.getnchannels()
