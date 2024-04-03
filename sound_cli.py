@@ -277,6 +277,11 @@ def reverse_sound(sound):
     
     Returns:
         tuple: A tuple containing the reversed audio data and audio parameters
+    
+    - reversed_audio_data (bytes): the reversed audio data
+    - num_channels (int): the number of audio channels
+    - sample width (int): the number of bytes per sample
+    - frame rate (int): the sample rate of the audio
     """
     with wave.open(sound, 'rb') as wav_file:
         # Get the audio parameters
