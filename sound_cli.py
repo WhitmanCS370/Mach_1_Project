@@ -276,7 +276,7 @@ def reverse_sound(sound):
         sound: an audio file with .wav extension
     
     Returns:
-        tuple: A tutple containing the reversed audio data and audio parameters
+        tuple: A tuple containing the reversed audio data and audio parameters
     """
     with wave.open(sound, 'rb') as wav_file:
         # Get the audio parameters
