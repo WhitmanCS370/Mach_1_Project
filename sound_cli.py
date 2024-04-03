@@ -269,8 +269,8 @@ def playback_speed_arg():
         else:
             print("Failed to modify the playback speed.")
 
-def reverse_sound(sound_file):
-    with wave.open(sound_file, 'rb') as wav_file:
+def reverse_sound(sound):
+    with wave.open(sound, 'rb') as wav_file:
         # Get the audio parameters
         num_channels = wav_file.getnchannels()
         sample_width = wav_file.getsampwidth()
