@@ -12,7 +12,7 @@ def check_extension(sound):
     """ Checks if the sound file has a .wav extension
     
     Parameters:
-        sound: a wav audio file with .wav exension
+        sound: an audio file object with .wav exension
     Returns:
         bool: True if file ends with .wav and false if not
     """
@@ -50,12 +50,21 @@ def list_sounds():
     for sound in os.listdir("./sounds"):
         print(sound)
 
-#List to store play objects for each sound played
+#List to store playback objects for each sound played
 play_objects = []
 
-#Function to play sounds 
 def play_sound(sound):
+    """ Plays the given sound file
+    
+    Parameters:
+        sound: an audio file object with .wav extension
+
+    Returns:
+        None
+    """
     wave_obj = sa.WaveObject.from_wave_file(sound)
+
+    # Stores the object representing playback of a sound
     play_obj = wave_obj.play()
     play_objects.append(play_obj)
 
