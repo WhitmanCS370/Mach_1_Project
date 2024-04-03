@@ -234,11 +234,23 @@ def play_back_speed(sound, speed):
         return modified_wave_obj
 
 def playback_speed_arg():
+    """ Handles command line arguments for manipulating playback speed of a sound file
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
+    # Check if the command line arguments are less than 4
     if len(sys.argv) < 4:
         print("Invalid number of arguments. Please use the following format: -speed <option> <sound>.")
         sys.exit(1)
 
+    #Extract flag that holds speed option
     speed_option = sys.argv[2]
+
+    #Extract sound
     sound = sys.argv[3]
 
     if check_extension(sound):
