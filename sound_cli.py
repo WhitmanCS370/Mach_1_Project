@@ -299,6 +299,14 @@ def reverse_sound(sound):
     return reversed_audio_data, num_channels, sample_width, frame_rate
 
 def reverse_sound_arg():
+    """ Handles command line argument for manipulating reversing sound. 
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
     # Check if the command line arguments are less than 3
     if len(sys.argv) < 3:
         print("Invalid number of arguments. Please use the following format: -rev <sound>.")
@@ -308,27 +316,6 @@ def reverse_sound_arg():
     sound = sys.argv[2]
 
     # Check if the file has a valid .wav extension 
-    if not check_extension(sound):
-        print("Invalid sound file format. Please use a .wav file.")
-        sys.exit(1)
-
-    try:
-        sound_snippet = random_snippet(sound)
-        if sound_snippet is not None:
-            print("Snippet created successfully.")
-            # Play the snippet
-            play_obj = sound_snippet.play()
-            if play_obj is not None:
-                print("Playing snippet...")
-                play_obj.wait_done()
-                print("Snippet playback completed.")
-            else:
-                print("Error: Play object is None.")
-        else:
-            print("Error: Snippet creation failed.")
-    except Exception as e:
-        print(f"Error occurred: {e}")
-        
     if check_extension(sound):
         # Reverse the sound
         reversed_audio_data, num_channels, sample_width, frame_rate = reverse_sound(sound)
