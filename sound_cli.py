@@ -143,7 +143,19 @@ def rename_sound_arg():
         print("Invalid sound file format. Please use a .wav file.")
 
 def random_snippet(sound):
+    """ Plays a random snippet of the given sound. Randomly selects a start
+    and end time, ensuring start time is less than end. Snippet is at least 
+    0.5 seconds long.
+
+    Parameters:
+        sound: an audio file object with .wav extension
+    
+    Returns:
+        obj: the random snippet of sound stored in new wav sound object
+    """
     with wave.open(sound, 'rb') as sound_wav:
+
+        # Get audio parameters
         num_frames = sound_wav.getnframes()
         frame_rate = sound_wav.getframerate()
         sample_width = sound_wav.getsampwidth()
@@ -169,12 +181,21 @@ def random_snippet(sound):
 
         snippet_audio_data = sound_wav.readframes(end_frame - start_frame)
 
+    # Create new wave object from modified audio data
     snippet_wave_obj = sa.WaveObject(snippet_audio_data, num_channels=sound_wav.getnchannels(),
                                       bytes_per_sample=sample_width, sample_rate=frame_rate)
 
     return snippet_wave_obj
 
 def random_snippet_arg():
+    """ Handles command line arguments for getting a random snippet from a sound file
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
     # Check if the command line arguments are less than 3
     if len(sys.argv) < 3:
         print("Invalid number of arguments. Please use the following format: -rand <sound>.")
