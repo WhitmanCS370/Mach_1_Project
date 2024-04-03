@@ -34,9 +34,15 @@ def print_help():
     for command, description in cd.COMMANDS.items():
         print(f"{command}: {description}")
 
-#Function to list the sounds 
 def list_sounds():
-    #check if command line arguments are greater than 2
+    """ Prints all available sounds from the sounds folder
+
+    Parameters:
+        None
+    Returns:
+        None
+    """
+    # check if command line arguments are greater than 2
     if len(sys.argv) > 2:
         print(f"Unrecognized command: {sys.argv[2]} Please just use the following format: -l or --list.")
         sys.exit(1)
