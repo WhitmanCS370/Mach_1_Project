@@ -70,22 +70,30 @@ def play_sound(sound):
 
 #Function that handles different command lines to play the sounds
 def play_sound_arg():
+    """ Handles different command line flags used to manipulate playback of sounds
+
+    Parameters:
+        None
+    
+    Returns:
+        None
+    """
+
     #check if the command line arguments are less than 3
     if len(sys.argv) < 3:
         print("Invalid number of arguments. Please use the following format: -p <sound> or --play <sound>.")
         sys.exit(1)
 
-    #if "-sm" provided 
+    # plays sound sequentially if "-sm" flag provided
     if sys.argv[2] == "-sm":
-        #plays sound sequentially 
         for i in range(3, len(sys.argv)):
             sound = sys.argv[i]  # add the "sounds/" prefix to the file name
             if check_extension(sound):
                 play_sound(sound)
             else:
                 print("Invalid sound file format. Please use a .wav file.")
+    # plays sound simultaneously if "-sq" flag provided
     elif sys.argv[2] == "-sq":
-        #plays sound simultaneously 
         for i in range(3, len(sys.argv)):
             sound = sys.argv[i]
             if check_extension(sound):
