@@ -8,8 +8,14 @@ import audioop
 import Commands as cd
 import simpleaudio as sa
 
-#Function to check if the sound file has a .wav estension 
 def check_extension(sound):
+    """ Checks if the sound file has a .wav extension
+    
+    Parameters:
+        sound: a wav audio file with .wav exension
+    Returns:
+        bool: True if file ends with .wav and false if not
+    """
     return sound.endswith(".wav")
 
 #Function that prints help message if the arguments are incorrect
