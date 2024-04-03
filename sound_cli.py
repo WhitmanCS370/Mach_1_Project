@@ -119,6 +119,14 @@ def rename_sound(sound):
     return sound.replace("_", " ").replace(".wav", "")
 
 def rename_sound_arg():
+    """ Handles command line arguments for renaming a sound file
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
     #check if command line arguments are less than 4
     if len(sys.argv) < 4:
         print("Invalid number of arguments. Please use the following format: -r <sound> <new_name> or --rename <sound> <new_name>.")
