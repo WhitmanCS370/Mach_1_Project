@@ -36,6 +36,10 @@ Run the following command if you want to list all files in a given directory
 ```
 python sound_cli.py -l sounds
 ```
+### Example Usage to play sound
+```
+python sound_cli.py -p <sounds folder>/<sound>.wav
+```
 
 ## Testing
 Went to the command line and test each command. We inputed corect and wrong command formats to check the commands work and if the wrong command format was given, it would print the error statement.
