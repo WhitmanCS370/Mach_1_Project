@@ -9,7 +9,10 @@ COMMANDS = {
   "-h or --help": "Prints all the available commands",
   "-l or --list": "Lists all the available sounds",
   "-p or --play (-sm or -sq) <sounds>": "Plays a sound file, -sm plays multiple sounds at the same time, -sq plays sounds sequentially",
-  "-r or --rename <sound> <new_name>": "Renames a sound file"
+  "-r or --rename <sound> <new_name>": "Renames a sound file",
+  "-rand <sound>": "Play a random snippet of a sound file",
+  "-speed (-fast or -slow) <sound>": "Plays a sound, -fast plays sound at double speed, -slow plays sound at half speed",
+  "-rev":"Plays a sound file in reverse"
 }
 ```
 
@@ -50,10 +53,10 @@ We found implementing playing sounds simultaneously to be challenging. We were h
 # Epoch 2
 
 ## Team Member Roles
-- Uli: Implemented part b
+- Uli: Implemented part b (ways to characterize and organize sounds) of epoch 2
 - Molly: Implemented part a (enhanced ways to listen to sounds) of epoch 2
-- Marlyn: Documentation and  requirements, and use cases
-- Clara: Tesing and helped with use cases and requiremnts
+- Marlyn: Documentation, requirements, and use cases
+- Clara: Testing and helped with use cases and requirements
 
 ## Testing
 
