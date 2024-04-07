@@ -50,10 +50,10 @@ We found implementing playing sounds simultaneously to be challenging. We were h
 # Epoch 2
 
 ## Team Member Roles
-- Uli:
+- Uli: Implemented part b
 - Molly: Implemented part a (enhanced ways to listen to sounds) of epoch 2
-- Marly:
-- Clara:
+- Marlyn: Documentation and  requirements, and use cases
+- Clara: Tesing and helped with use cases and requiremnts
 
 ## Testing
 
