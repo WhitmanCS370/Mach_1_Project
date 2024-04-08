@@ -1,12 +1,12 @@
 import os
-import e123_utils
+import e123utils
 
 def list_sounds(sound_dir: str = None) -> None:
     """
     Lists all sound files in a specific directory, showing directories and their contents hierarchically.
     """
     # Base directory setup
-    sound_dir = os.path.join(e123_utils.get_main_sound_dir_path(), sound_dir or '')
+    sound_dir = os.path.join(e123utils.get_main_sound_dir_path(), sound_dir or '')
     print(os.path.basename(sound_dir))
 
     # Function to handle the recursive directory listing with proper indentation
@@ -43,7 +43,7 @@ def search_sound_dir(sound_dir: str = None) -> None:
     Searches for a sound file in a specific directory.
     """
     # Get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     sound_dir = os.path.join(main_sound_dir, sound_dir or '')
 
     # Get the search term

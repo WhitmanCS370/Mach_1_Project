@@ -11,7 +11,7 @@ def get_main_sound_dir_path() -> str:
     # script_dir = os.path.dirname(os.path.realpath(__file__))
     # main_sound_dir = os.path.join(script_dir, 'ESMD/')
 
-    main_sound_dir = os.path.join(os.getcwd(), 'ESMD')
+    main_sound_dir = os.path.join(os.getcwd(), 'Epoch123/ESMD/')
 
     # print(main_sound_dir)
 

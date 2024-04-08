@@ -4,7 +4,7 @@ import os
 import numpy as np
 import glob
 
-import e123_utils
+import e123utils
 
 def play_sound(sound_file: str) -> None:
     """
@@ -12,12 +12,12 @@ def play_sound(sound_file: str) -> None:
     """
 
     # check that the file is a wav file
-    if not e123_utils.is_valid_extension(sound_file):
+    if not e123utils.is_valid_extension(sound_file):
         print("Invalid file extension. Only .wav files are supported.")
         return
     
     # get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     # load the sound file
     print(main_sound_dir + sound_file)
     sound = AudioSegment.from_wav(main_sound_dir + sound_file)
@@ -31,12 +31,12 @@ def play_sound_simultaneously(sounds_list: list) -> None:
     """
 
     # get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     # create an empty sound object
     sounds = AudioSegment.empty()
     for sound_f in sounds_list:
         # check that the file is a wav file
-        if not e123_utils.is_valid_extension(sound_f):
+        if not e123utils.is_valid_extension(sound_f):
             print(f"Invalid file extension: {sound_f}. Only .wav files are supported.")
             continue
         # load the sound file
@@ -51,10 +51,10 @@ def play_sound_sequentially(sounds_list: list) -> None:
     """
 
     # get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     for sound_f in sounds_list:
         # check that the file is a wav file
-        if not e123_utils.is_valid_extension(sound_f):
+        if not e123utils.is_valid_extension(sound_f):
             print(f"Invalid file extension: {sound_f}. Only .wav files are supported.")
             continue
         # load the sound file
@@ -69,7 +69,7 @@ def play_random_sound(sound_dir: str = None) -> None:
     """
     # check that the sound directory exists
     # get the ESMD path
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     
     # if no sound directory is provided, use the main sound directory
     if sound_dir is None:
@@ -102,11 +102,11 @@ def play_sound_reverse(sound_file: str) -> None:
     """
 
     # check that the file is a wav file
-    if not e123_utils.is_valid_extension(sound_file):
+    if not e123utils.is_valid_extension(sound_file):
         print("Invalid file extension. Only .wav files are supported.")
         return
     # get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     # load the sound file
     sound = AudioSegment.from_wav(main_sound_dir + sound_file)
     # reverse the sound
@@ -121,11 +121,11 @@ def play_sound_speed(sound_file: str, speed: float) -> None:
     """
 
     # check that the file is a wav file
-    if not e123_utils.is_valid_extension(sound_file):
+    if not e123utils.is_valid_extension(sound_file):
         print("Invalid file extension. Only .wav files are supported.")
         return
     # get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     # load the sound file
     sound = AudioSegment.from_wav(main_sound_dir + sound_file)
     # speed up the sound
@@ -140,11 +140,11 @@ def play_random_sound_snippet(sound_file: str) -> None:
     """
 
     # check that the file is a wav file
-    if not e123_utils.is_valid_extension(sound_file):
+    if not e123utils.is_valid_extension(sound_file):
         print("Invalid file extension. Only .wav files are supported.")
         return
     # get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     # load the sound file
     sound = AudioSegment.from_wav(main_sound_dir + sound_file)
     # get the duration of the sound
@@ -163,11 +163,11 @@ def play_sound_snippet(sound_file: str, start_time: int, end_time: int) -> None:
     """
 
     # check that the file is a wav file
-    if not e123_utils.is_valid_extension(sound_file):
+    if not e123utils.is_valid_extension(sound_file):
         print("Invalid file extension. Only .wav files are supported.")
         return
     # get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     # load the sound file
     sound = AudioSegment.from_wav(main_sound_dir + sound_file)
     # get the duration of the sound

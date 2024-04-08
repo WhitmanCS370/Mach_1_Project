@@ -3,7 +3,7 @@ import wave
 import numpy as np
 import curses
 
-import e123_utils
+import e123utils
 
 def sound_visualize(stdscr: 'curses._CursesWindow', sound_file: str) -> None:
     """
@@ -12,7 +12,7 @@ def sound_visualize(stdscr: 'curses._CursesWindow', sound_file: str) -> None:
     """
 
     # Check that the file is a wav file
-    if not e123_utils.is_valid_extension(sound_file):
+    if not e123utils.is_valid_extension(sound_file):
         stdscr.addstr(0, 0, "Invalid file extension. Only .wav files are supported.")
         stdscr.refresh()
         stdscr.getkey()
@@ -23,7 +23,7 @@ def sound_visualize(stdscr: 'curses._CursesWindow', sound_file: str) -> None:
     stdscr.clear()
 
     # Get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     # Check that the sound file exists
     sound_file_path = os.path.join(main_sound_dir, sound_file)
     # Check that the sound file exists
@@ -72,7 +72,7 @@ def sound_rename(old_name: str, new_name: str) -> None:
     """
 
     # Get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     # Check if the old sound file exists
     old_sound_file_path = os.path.join(main_sound_dir, old_name)
     if not os.path.isfile(old_sound_file_path):
@@ -93,7 +93,7 @@ def sound_delete(sound_file: str) -> None:
     """
 
     # Get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     # Check if the sound file exists
     sound_file_path = os.path.join(main_sound_dir, sound_file)
     if not os.path.isfile(sound_file_path):
@@ -109,9 +109,9 @@ def sound_print_metadata(sound_file: str) -> None:
     """
 
     # Get the main sound directory
-    main_sound_dir = e123_utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path()
     # Check if the sound file has a valid extension
-    if not e123_utils.is_valid_extension(sound_file):
+    if not e123utils.is_valid_extension(sound_file):
         print(f"Invalid sound file: {sound_file}")
         return
     # Check if the sound file exists
