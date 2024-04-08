@@ -43,7 +43,7 @@ def search_sound_dir(sound_dir: str = None, search_term = '') -> None:
     Searches for a sound file in a specific directory.
     """
     # Get the main sound directory
-    main_sound_dir = e123utils.get_main_sound_dir_path()
+    main_sound_dir = e123utils.get_main_sound_dir_path() 
     sound_dir = os.path.join(main_sound_dir, sound_dir or '')
 
     # Get the search term
