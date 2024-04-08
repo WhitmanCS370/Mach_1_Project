@@ -58,5 +58,3 @@ We found implementing playing sounds simultaneously to be challenging. We were h
 - Marlyn: Documentation, requirements, and use cases
 - Clara: Testing and helped with use cases and requirements
 
-## Reflection
-
