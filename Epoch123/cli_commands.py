@@ -49,5 +49,10 @@ COMMANDS = {
                 "how_to_use": "-p <sound_file> or --play <sound_file>"
             }
         },
-    }
+    },
+    "search":
+    {
+        "description": "Searches for a sound file in the main sound directory, if no specific subdirectory is provided",
+        "how_to_use": "-sh <sound_file> or --search <sound_file>"
+    },
 }

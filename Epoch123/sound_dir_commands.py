@@ -1,9 +1,9 @@
 import os
 import e123utils
 
-def list_sounds(sound_dir: str = None) -> None:
+def list_sounds(sound_dir: str = None, search_term = '') -> None:
     """
-    Lists all sound files in a specific directory, showing directories and their contents hierarchically.
+        Lists all sound files in a specific directory, showing directories and their contents hierarchically.
     """
     # Base directory setup
     sound_dir = os.path.join(e123utils.get_main_sound_dir_path(), sound_dir or '')
@@ -38,7 +38,7 @@ def list_sounds(sound_dir: str = None) -> None:
 
     list_dir_contents(sound_dir)
 
-def search_sound_dir(sound_dir: str = None) -> None:
+def search_sound_dir(sound_dir: str = None, search_term = '') -> None:
     """
     Searches for a sound file in a specific directory.
     """
@@ -47,10 +47,10 @@ def search_sound_dir(sound_dir: str = None) -> None:
     sound_dir = os.path.join(main_sound_dir, sound_dir or '')
 
     # Get the search term
-    search_term = input("Enter the search term: ")
+    # search_term = input("Enter the search term: ")
 
     # Function to handle the recursive directory listing with proper indentation
-    def search_dir_contents(dir_path):
+    def search_dir_contents(dir_path: str) -> None:
         nonlocal search_term
         entries = os.listdir(dir_path)
         dirs = [d for d in entries if os.path.isdir(os.path.join(dir_path, d))]

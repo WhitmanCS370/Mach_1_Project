@@ -16,6 +16,9 @@ class CLI:
             "-l": list_sounds,
             "--list": list_sounds,
             "-p": self.play_sounds,
+            "--play": self.play_sounds,
+            "-sh": self.search_sound_dir,
+            "--search": self.search_sound_dir
         }
 
     def print_help(self) -> None:
@@ -65,6 +68,17 @@ class CLI:
         except IndexError:
             print("Invalid subcommand. Use -h or --help for help.")
             sys.exit(1)
+
+    def search_sound_dir(self) -> None:
+        """
+            Searches for a sound file in the main sound directory
+        """
+        try:
+            sound_dir = self.args[2] if len(self.args) > 2 else ''
+            search_term = self.args[3] if len(self.args) > 3 else ''
+            search_sound_dir(sound_dir=sound_dir, search_term=search_term)
+        except IndexError:
+            search_sound_dir()
 
     def run(self) -> None:
         """
