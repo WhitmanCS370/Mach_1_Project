@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 import os
 import shutil
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
 
 class AudioArchiveGUI:
     def __init__(self, root):
@@ -47,7 +49,7 @@ class AudioArchiveGUI:
         self.play_options.grid(row=0, column=3, padx=10, pady=10)
         self.play_options.current(0)
 
-        # Bottom Panel (Editing Options)
+        # Middle Panel (Editing Options)
         self.edit_frame = ttk.Frame(self.right_frame)
         self.edit_frame.grid(row=1, column=0, columnspan=4, padx=10, pady=10, sticky="ew")
 
@@ -58,7 +60,16 @@ class AudioArchiveGUI:
         self.edit_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
         self.edit_button = ttk.Button(self.edit_frame, text="Apply")
-        self.edit_button.grid(row=3, column=0, padx=5, pady=5, sticky="ew")
+        self.edit_button.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+
+        # Bottom Panel (Audio Visualization)
+        self.visualization_frame = ttk.Frame(self.right_frame)
+        self.visualization_frame.grid(row=2, column=0, columnspan=4, padx=10, pady=10, sticky="nsew")
+
+        self.fig, self.ax = plt.subplots(figsize=(3, 2))
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.visualization_frame)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
         # Populate the tree with the specified folder
         folder_path = "/Users/mollyhalverson/Desktop/Whitman/23-24/370/Mach_1_Project/Epoch123/ESMD"
