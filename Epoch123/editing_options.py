@@ -3,7 +3,7 @@ from pydub.effects import normalize
 from pydub.playback import play
 import e123utils
 
-def change_audio_volume(sound_file: str, dB: float, louderSofter: str) -> None:
+def change_audio_volume(sound_file: str, dB: float, volume: str) -> None:
     """
         Increases or decreases volume of sound by decibels 
     """
@@ -17,7 +17,7 @@ def change_audio_volume(sound_file: str, dB: float, louderSofter: str) -> None:
     # load the sound file
     sound = AudioSegment.from_wav(main_sound_dir + sound_file)
     
-    if louderSofter == 'louder':
+    if volume == 'increase':
         sound = sound + dB
     else:
         sound = sound - dB
