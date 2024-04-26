@@ -4,6 +4,7 @@ import os
 import shutil
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
+from add_metadata import TagCreationGUI
 
 class AudioArchiveGUI:
     def __init__(self, root):
@@ -98,7 +99,14 @@ class AudioArchiveGUI:
                     self.tree.insert(item, "end", text=directory, open=False, values=(os.path.join(path, directory), "folder"))
                 else:
                     self.tree.insert(item, "end", text=directory, open=False, values=(os.path.join(path, directory), "file"))
-
+    
+    def upload_sound(self):
+        file_path = filedialog.askopenfilename()
+        if file_path:
+            # Open the tag creation window
+            tag_window = tk.Toplevel(self.root)
+            tag_gui = TagCreationGUI(tag_window)
+    """
     def upload_sound(self):
         file_path = filedialog.askopenfilename()
         if file_path:
@@ -108,7 +116,7 @@ class AudioArchiveGUI:
             self.populate_tree_with_folder(self.folder_path)
             print("Uploaded sound file:", file_path)
             print("Added to ESMD:", destination)
-
+    """
     def navigate_sound(self):
         # Populate the tree with the specified folder
         folder_path = "/Users/mollyhalverson/Desktop/Whitman/23-24/370/Mach_1_Project/Epoch123/ESMD"
