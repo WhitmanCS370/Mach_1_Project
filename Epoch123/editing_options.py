@@ -3,6 +3,17 @@ from pydub.effects import normalize
 from pydub.playback import play
 import e123utils
 
+def save_audio_option():
+    while True:
+        decision = input("Would you like to save this sound? (y/n)")
+        if decision == 'y':
+            return True
+        elif decision == 'n':
+            return False
+        else:
+            print("Invalid response. Please type y/n.")
+            
+
 def change_audio_volume(sound_file: str, dB: float, volume: str) -> None:
     """
         Increases or decreases volume of sound by decibels 
@@ -40,9 +51,10 @@ def merge_audio_files(sound_file1: str, sound_file2: str) -> None:
     combined_sound = sound1 + sound2
     play(combined_sound)  
 
-def trim_audio(sound_file: str, beginning: int, end: int) -> None:
+def trim_audio(sound_file: str, beginning: int, end: int, output_file: str) -> None:
     """
-        Cuts an audio from beginning and end in seconds
+        Cuts an audio from beginning and end in seconds. Saves audio to new file
+        given either a full file path or just the name for the edited audio.
     """
     # check that the file is a wav file
     if not e123utils.is_valid_extension(sound_file):
