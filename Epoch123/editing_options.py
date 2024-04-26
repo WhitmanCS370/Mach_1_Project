@@ -1,4 +1,5 @@
 from pydub import AudioSegment
+from pydub.effects import normalize
 from pydub.playback import play
 import e123utils
 
