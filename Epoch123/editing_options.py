@@ -23,3 +23,19 @@ def change_audio_volume(sound_file: str, dB: float, volume: str) -> None:
         sound = sound - dB
     # play the sound
     play(sound)
+
+def merge_audio_files(sound_file1: str, sound_file2: str) -> None:
+    # check that the file is a wav file
+    if not e123utils.is_valid_extension(sound_file1) or not e123utils.is_valid_extension(sound_file2):
+        print("Invalid file extension. Only .wav files are supported.")
+        return
+    # get the main sound directory
+    main_sound_dir = e123utils.get_main_sound_dir_path()
+
+    # load the sound file
+    sound1 = AudioSegment.from_wav(main_sound_dir + sound_file1) 
+    sound2 = AudioSegment.from_wav(main_sound_dir + sound_file2) 
+
+    # combine both files
+    combined_sound = sound1 + sound2
+    play(combined_sound)  
