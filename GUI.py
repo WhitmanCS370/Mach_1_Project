@@ -4,7 +4,7 @@ import os
 import shutil
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
-from add_metadata import TagCreationGUI
+from add_metadataGUI import TagCreationGUI
 
 class AudioArchiveGUI:
     def __init__(self, root):
@@ -20,9 +20,6 @@ class AudioArchiveGUI:
 
         self.upload_option = ttk.Button(self.file_frame, text="Upload Sound", command=self.upload_sound)
         self.upload_option.grid(row=1, column=0, padx=5, pady=5, sticky="w")
-
-        self.navigate_option = ttk.Button(self.file_frame, text="Navigate to Existing Sound", command=self.navigate_sound)
-        self.navigate_option.grid(row=2, column=0, padx=5, pady=5, sticky="w")
 
         self.tree = ttk.Treeview(self.file_frame, columns=("fullpath", "type"), show="tree", height=20)
         self.tree.grid(row=3, column=0, columnspan=3, padx=5, pady=5, sticky="nsew")
