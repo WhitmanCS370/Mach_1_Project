@@ -72,5 +72,15 @@ def trim_audio(sound_file: str, beginning: int, end: int, output_file: str) -> N
         print(f"Error: Beginning or end time exceed the duration of the audio ({len(sound)/1000} seconds).")
         return
     trimmed_sound = sound[beginning_cut:end_cut]
+
+    # Play the trimmed audio for preview
+    print("Previewing trimmed audio...")
     play(trimmed_sound)
+
+    # Prompt user to save editing audio or not
+    if save_audio_option():
+        trimmed_sound.export(output_file, format = "wav")
+        print(f"Trimmed audio save to: {output_file}")
+    else:
+        print("Trimmed audio not saved.")
 
