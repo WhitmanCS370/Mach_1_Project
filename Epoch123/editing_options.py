@@ -1,104 +1,86 @@
-import tkinter as tk
-from tkinter import ttk, filedialog
-import os
-import shutil
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import matplotlib.pyplot as plt
-from add_metadataGUI import TagCreationGUI
+from pydub import AudioSegment
+from pydub.effects import normalize
+from pydub.playback import play
+import e123utils
 
-class AudioArchiveGUI:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Audio Archive System")
+def save_audio_option():
+    while True:
+        decision = input("Would you like to save this sound? (y/n)")
+        if decision == 'y':
+            return True
+        elif decision == 'n':
+            return False
+        else:
+            print("Invalid response. Please type y/n.")
+            
 
-        # File Navigation Section
-        self.file_frame = ttk.Frame(root, padding="20")
-        self.file_frame.grid(row=0, column=0, sticky="nsew")
+def change_audio_volume(sound_file: str, dB: float, volume: str) -> None:
+    """
+        Increases or decreases volume of sound by decibels 
+    """
 
-        self.file_label = ttk.Label(self.file_frame, text="Select File or Upload Sound:")
-        self.file_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+    # check that the file is a wav file
+    if not e123utils.is_valid_extension(sound_file):
+        print("Invalid file extension. Only .wav files are supported.")
+        return
+    # get the main sound directory
+    main_sound_dir = e123utils.get_main_sound_dir_path()
+    # load the sound file
+    sound = AudioSegment.from_wav(main_sound_dir + sound_file)
+    
+    if volume == 'increase':
+        sound = sound + dB
+    else:
+        sound = sound - dB
+    # play the sound
+    play(sound)
 
-        self.upload_option = ttk.Button(self.file_frame, text="Upload Sound", command=self.upload_sound)
-        self.upload_option.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+def merge_audio_files(sound_file1: str, sound_file2: str) -> None:
+    # check that the file is a wav file
+    if not e123utils.is_valid_extension(sound_file1) or not e123utils.is_valid_extension(sound_file2):
+        print("Invalid file extension. Only .wav files are supported.")
+        return
+    # get the main sound directory
+    main_sound_dir = e123utils.get_main_sound_dir_path()
 
-        self.tree = ttk.Treeview(self.file_frame, columns=("fullpath", "type"), show="tree", height=20)
-        self.tree.grid(row=3, column=0, columnspan=3, padx=5, pady=5, sticky="nsew")
-        self.tree.bind("<<TreeviewOpen>>", self.populate_tree)
+    # load the sound file
+    sound1 = AudioSegment.from_wav(main_sound_dir + sound_file1) 
+    sound2 = AudioSegment.from_wav(main_sound_dir + sound_file2) 
 
-        self.scrollbar = ttk.Scrollbar(self.file_frame, orient="vertical", command=self.tree.yview)
-        self.scrollbar.grid(row=3, column=3, sticky="ns")
-        self.tree.configure(yscrollcommand=self.scrollbar.set)
+    # combine both files
+    combined_sound = sound1 + sound2
+    play(combined_sound)  
 
-        # Right Section
-        self.right_frame = ttk.Frame(root, padding="20")
-        self.right_frame.grid(row=0, column=1, sticky="nsew")
+def trim_audio(sound_file: str, beginning: int, end: int, output_file: str) -> None:
+    """
+        Cuts an audio from beginning and end in seconds. Saves audio to new file
+        given either a full file path or just the name for the edited audio.
+    """
+    # check that the file is a wav file
+    if not e123utils.is_valid_extension(sound_file):
+        print("Invalid file extension. Only .wav files are supported.")
+        return
+    # get the main sound directory
+    main_sound_dir = e123utils.get_main_sound_dir_path()
+    # load the sound file
+    sound = AudioSegment.from_wav(main_sound_dir + sound_file)  
+    # pydub works with milliseconds, change to seconds 
+    beginning_cut = beginning * 1000
+    end_cut = end * 1000
 
-        # Initially, display buttons for editing options
-        self.edit_metadata_button = ttk.Button(self.right_frame, text="Edit Metadata", command=self.edit_metadata)
-        self.edit_metadata_button.grid(row=0, column=0, padx=10, pady=10)
+    if beginning_cut > len(sound) or end_cut > len(sound):
+        print(f"Error: Beginning or end time exceed the duration of the audio ({len(sound)/1000} seconds).")
+        return
+    trimmed_sound = sound[beginning_cut:end_cut]
 
-        self.edit_sound_button = ttk.Button(self.right_frame, text="Edit Sound File", command=self.edit_sound)
-        self.edit_sound_button.grid(row=0, column=1, padx=10, pady=10)
+    # Play the trimmed audio for preview
+    print("Previewing trimmed audio...")
+    play(trimmed_sound)
 
-        # Hide Right Section initially
-        self.hide_right_section()
+    # Prompt user to save editing audio or not
+    if save_audio_option():
+        trimmed_sound.export(output_file, format = "wav")
+        print(f"Trimmed audio save to: {output_file}")
+    else:
+        print("Trimmed audio not saved.")
 
-        # Populate the tree with the specified folder
-        folder_path = "/Users/mollyhalverson/Desktop/Whitman/23-24/370/Mach_1_Project/Epoch123/ESMD"
-        self.populate_tree_with_folder(folder_path)
-
-    def populate_tree_with_folder(self, folder_path):
-        self.tree.delete(*self.tree.get_children())
-        self.populate_tree_recursively("", folder_path)
-
-    def populate_tree_recursively(self, parent, path):
-        for item in os.listdir(path):
-            full_path = os.path.join(path, item)
-            if os.path.isdir(full_path):
-                folder_id = self.tree.insert(parent, "end", text=item, open=False, values=(full_path, "folder"))
-                self.populate_tree_recursively(folder_id, full_path)
-            else:
-                self.tree.insert(parent, "end", text=item, open=False, values=(full_path, "file"))
-
-    def populate_tree(self, event):
-        item = self.tree.focus()
-        if self.tree.item(item, "values")[1] == "drive":
-            path = self.tree.item(item, "values")[0]
-            self.tree.delete(self.tree.get_children(item))
-            for directory in os.listdir(path):
-                if os.path.isdir(os.path.join(path, directory)):
-                    self.tree.insert(item, "end", text=directory, open=False, values=(os.path.join(path, directory), "folder"))
-                else:
-                    self.tree.insert(item, "end", text=directory, open=False, values=(os.path.join(path, directory), "file"))
-
-    def upload_sound(self):
-        file_path = filedialog.askopenfilename()
-        if file_path:
-            # Open the tag creation window
-            tag_window = tk.Toplevel(self.root)
-            tag_gui = TagCreationGUI(tag_window)
-
-            # Show Right Section
-            self.show_right_section()
-
-    def edit_metadata(self):
-        # Show Metadata Editing Interface
-        pass
-
-    def edit_sound(self):
-        # Show Sound Editing Interface
-        pass
-
-    def show_right_section(self):
-        self.right_frame.grid(row=0, column=1, sticky="nsew")
-
-    def hide_right_section(self):
-        self.right_frame.grid_forget()
-
-def main():
-    root = tk.Tk()
-    app = AudioArchiveGUI(root)
-    root.mainloop()
-
-if __name__ == "__main__":
-    main()
