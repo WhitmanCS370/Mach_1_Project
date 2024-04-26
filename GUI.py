@@ -11,9 +11,13 @@ class AudioArchiveGUI:
         self.root = root
         self.root.title("Audio Archive System")
 
+        # Create a ttk Notebook
+        self.notebook = ttk.Notebook(root)
+        self.notebook.grid(row=0, column=0, columnspan=2, sticky="nsew")
+
         # File Navigation Section
-        self.file_frame = ttk.Frame(root, padding="20")
-        self.file_frame.grid(row=0, column=0, sticky="nsew")
+        self.file_frame = ttk.Frame(self.notebook, padding="20")
+        self.notebook.add(self.file_frame, text="File Navigation")
 
         self.file_label = ttk.Label(self.file_frame, text="Select File or Upload Sound:")
         self.file_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
@@ -30,44 +34,18 @@ class AudioArchiveGUI:
         self.tree.configure(yscrollcommand=self.scrollbar.set)
 
         # Right Section
-        self.right_frame = ttk.Frame(root, padding="20")
-        self.right_frame.grid(row=0, column=1, sticky="nsew")
+        self.right_frame = ttk.Frame(self.notebook, padding="20")
+        self.notebook.add(self.right_frame, text="Editing Options")
 
-        # Top Panel (Play, Pause, Stop Buttons and Dropdown)
-        self.play_button = ttk.Button(self.right_frame, text="Play")
-        self.play_button.grid(row=0, column=0, padx=10, pady=10)
+        # Initially, display buttons for editing options
+        self.edit_metadata_button = ttk.Button(self.right_frame, text="Edit Metadata", command=self.edit_metadata)
+        self.edit_metadata_button.grid(row=0, column=0, padx=10, pady=10)
 
-        self.pause_button = ttk.Button(self.right_frame, text="Pause")
-        self.pause_button.grid(row=0, column=1, padx=10, pady=10)
+        self.edit_sound_button = ttk.Button(self.right_frame, text="Edit Sound File", command=self.edit_sound)
+        self.edit_sound_button.grid(row=0, column=1, padx=10, pady=10)
 
-        self.stop_button = ttk.Button(self.right_frame, text="Stop")
-        self.stop_button.grid(row=0, column=2, padx=10, pady=10)
-
-        self.play_options = ttk.Combobox(self.right_frame, values=["Option 1", "Option 2", "Option 3"])
-        self.play_options.grid(row=0, column=3, padx=10, pady=10)
-        self.play_options.current(0)
-
-        # Middle Panel (Editing Options)
-        self.edit_frame = ttk.Frame(self.right_frame)
-        self.edit_frame.grid(row=1, column=0, columnspan=4, padx=10, pady=10, sticky="ew")
-
-        self.edit_options = ttk.Combobox(self.edit_frame, values=["Option 1", "Option 2", "Option 3"])
-        self.edit_options.grid(row=1, column=0, padx=5, pady=5, sticky="w")
-
-        self.edit_label = ttk.Label(self.edit_frame, text="Editing Options:")
-        self.edit_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
-
-        self.edit_button = ttk.Button(self.edit_frame, text="Apply")
-        self.edit_button.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
-
-        # Bottom Panel (Audio Visualization)
-        self.visualization_frame = ttk.Frame(self.right_frame)
-        self.visualization_frame.grid(row=2, column=0, columnspan=4, padx=10, pady=10, sticky="nsew")
-
-        self.fig, self.ax = plt.subplots(figsize=(3, 2))
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self.visualization_frame)
-        self.canvas.draw()
-        self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        # Hide Right Section initially
+        self.hide_right_section()
 
         # Populate the tree with the specified folder
         folder_path = "/Users/mollyhalverson/Desktop/Whitman/23-24/370/Mach_1_Project/Epoch123/ESMD"
@@ -96,28 +74,30 @@ class AudioArchiveGUI:
                     self.tree.insert(item, "end", text=directory, open=False, values=(os.path.join(path, directory), "folder"))
                 else:
                     self.tree.insert(item, "end", text=directory, open=False, values=(os.path.join(path, directory), "file"))
-    
+
     def upload_sound(self):
         file_path = filedialog.askopenfilename()
         if file_path:
             # Open the tag creation window
             tag_window = tk.Toplevel(self.root)
-            tag_gui = TagCreationGUI(tag_window)
-    """
-    def upload_sound(self):
-        file_path = filedialog.askopenfilename()
-        if file_path:
-            file_name = os.path.basename(file_path)
-            destination = os.path.join(self.folder_path, "user", file_name)
-            shutil.copy(file_path, destination)
-            self.populate_tree_with_folder(self.folder_path)
-            print("Uploaded sound file:", file_path)
-            print("Added to ESMD:", destination)
-    """
-    def navigate_sound(self):
-        # Populate the tree with the specified folder
-        folder_path = "/Users/mollyhalverson/Desktop/Whitman/23-24/370/Mach_1_Project/Epoch123/ESMD"
-        self.populate_tree_with_folder(folder_path)
+            #tag_gui = TagCreationGUI(tag_window)
+
+            # Show Right Section
+            self.show_right_section()
+
+    def edit_metadata(self):
+        # Show Metadata Editing Interface
+        pass
+
+    def edit_sound(self):
+        # Show Sound Editing Interface
+        pass
+
+    def show_right_section(self):
+        self.notebook.select(self.right_frame)
+
+    def hide_right_section(self):
+        self.notebook.select(self.file_frame)
 
 def main():
     root = tk.Tk()
