@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 import os
 import shutil
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import matplotlib.pyplot as plt
 from add_metadataGUI import TagCreationGUI
 
 class AudioArchiveGUI:
@@ -33,19 +31,20 @@ class AudioArchiveGUI:
         self.scrollbar.grid(row=3, column=3, sticky="ns")
         self.tree.configure(yscrollcommand=self.scrollbar.set)
 
-        # Right Section
-        self.right_frame = ttk.Frame(self.notebook, padding="20")
-        self.notebook.add(self.right_frame, text="Editing Options")
+        # Editing Options Section
+        self.edit_frame = ttk.Frame(self.notebook, padding="20")
+        self.notebook.add(self.edit_frame, text="Editing Options")
 
         # Initially, display buttons for editing options
-        self.edit_metadata_button = ttk.Button(self.right_frame, text="Edit Metadata", command=self.edit_metadata)
+        self.edit_metadata_button = ttk.Button(self.edit_frame, text="Edit Metadata", command=self.edit_metadata)
         self.edit_metadata_button.grid(row=0, column=0, padx=10, pady=10)
 
-        self.edit_sound_button = ttk.Button(self.right_frame, text="Edit Sound File", command=self.edit_sound)
+        self.edit_sound_button = ttk.Button(self.edit_frame, text="Edit Sound File", command=self.edit_sound)
         self.edit_sound_button.grid(row=0, column=1, padx=10, pady=10)
 
-        # Hide Right Section initially
-        self.hide_right_section()
+        # Metadata Viewing Section
+        self.metadata_frame = ttk.Frame(self.notebook, padding="20")
+        self.notebook.add(self.metadata_frame, text="View Metadata")
 
         # Populate the tree with the specified folder
         folder_path = "/Users/mollyhalverson/Desktop/Whitman/23-24/370/Mach_1_Project/Epoch123/ESMD"
@@ -80,24 +79,13 @@ class AudioArchiveGUI:
         if file_path:
             # Open the tag creation window
             tag_window = tk.Toplevel(self.root)
-            #tag_gui = TagCreationGUI(tag_window)
-
-            # Show Right Section
-            self.show_right_section()
+            tag_gui = TagCreationGUI(tag_window)
 
     def edit_metadata(self):
-        # Show Metadata Editing Interface
         pass
 
     def edit_sound(self):
-        # Show Sound Editing Interface
         pass
-
-    def show_right_section(self):
-        self.notebook.select(self.right_frame)
-
-    def hide_right_section(self):
-        self.notebook.select(self.file_frame)
 
 def main():
     root = tk.Tk()
