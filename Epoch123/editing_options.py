@@ -2,9 +2,9 @@ from pydub import AudioSegment
 from pydub.playback import play
 import e123utils
 
-def play_sound_speed(sound_file: str, speed: float) -> None:
+def change_audio_volume(sound_file: str, dB: float, louderSofter: str) -> None:
     """
-        Plays a sound by some percentage faster or slower, the default is 1.0
+        Increases or decreases volume of sound by decibels 
     """
 
     # check that the file is a wav file
@@ -15,7 +15,10 @@ def play_sound_speed(sound_file: str, speed: float) -> None:
     main_sound_dir = e123utils.get_main_sound_dir_path()
     # load the sound file
     sound = AudioSegment.from_wav(main_sound_dir + sound_file)
-    # speed up the sound
-    sound = sound.speedup(playback_speed=speed)
+    
+    if louderSofter == 'louder':
+        sound = sound + dB
+    else:
+        sound = sound - dB
     # play the sound
     play(sound)
