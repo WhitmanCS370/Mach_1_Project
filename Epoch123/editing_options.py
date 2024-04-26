@@ -56,6 +56,9 @@ def trim_audio(sound_file: str, beginning: int, end: int) -> None:
     beginning_cut = beginning * 1000
     end_cut = end * 1000
 
+    if beginning_cut > len(sound) or end_cut > len(sound):
+        print(f"Error: Beginning or end time exceed the duration of the audio ({len(sound)/1000} seconds).")
+        return
     trimmed_sound = sound[beginning_cut:end_cut]
-
+    play(trimmed_sound)
 
