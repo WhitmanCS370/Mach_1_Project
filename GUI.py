@@ -7,6 +7,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
 
 class FileNavigation:
+    """
+    Displays file navigation system on the GUI with option to upload a sound
+    """
     def __init__(self, parent_frame):
         self.frame = ttk.Frame(parent_frame, padding="20")
         self.frame.grid(row=0, column=0, sticky="nsew")
@@ -42,17 +45,21 @@ class FileNavigation:
             return file_path  # Return the file path for further processing in the main application
 
 class EditingOptions:
+    """
+    Allows user to play and edit the sound in Editing Options tab
+    """
     def __init__(self, parent_frame):
         self.frame = ttk.Frame(parent_frame, padding="20")
         self.frame.grid(row=0, column=1, sticky="nsew")
-
-    def edit_metadata(self):
-        pass
 
     def edit_sound(self):
         pass
 
 class ViewMetadata:
+    """
+    Displays metadata of sound, audio visual, and option to add additional tags
+    in Metadata tab
+    """
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
         
@@ -108,6 +115,9 @@ class ViewMetadata:
 
     
 class AudioArchiveGUI:
+    """
+    Main driver for the different tabs
+    """
     def __init__(self, root):
         self.root = root
         self.root.title("Audio Archive System")
@@ -137,25 +147,6 @@ class AudioArchiveGUI:
         # Populate the tree with the specified folder
         folder_path = "/Users/mollyhalverson/Desktop/Whitman/23-24/370/Mach_1_Project/Epoch123/ESMD"
         self.populate_tree_with_folder(folder_path)
-    
-    '''
-    def audio_visual(self):
-        # Data for plotting
-        t = np.arange(0.0, 2.0, 0.01)
-        s = 1 + np.sin(2 * np.pi * t)
-
-        fig, ax = plt.subplots()
-        ax.plot(t, s)
-
-        ax.set(xlabel='time (s)', ylabel='voltage (mV)',
-            title='About as simple as it gets, folks')
-        ax.grid()
-        
-        # Create an instance of ViewMetadata
-        view_metadata = ViewMetadata(self.root)
-        # Display audio visual plot
-        view_metadata.display_audio_visual(fig)
-        '''
 
     def populate_tree_with_folder(self, folder_path):
         self.file_nav.tree.delete(*self.file_nav.tree.get_children())
