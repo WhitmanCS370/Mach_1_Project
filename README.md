@@ -61,3 +61,10 @@ We found implementing playing sounds simultaneously to be challenging. We were h
 Reflection 
 Implementing visualize_audiowas the hardest to implement and the one we struggled with. We were having trouble displaying the audio bar. We did some research and we were able to figure it out. For Epoch 3 we plan to have a GUI.
 
+# Epoch 3
+
+## Team Member Roles
+- Uli: Impalmentation part 2, further editing and features of the GUI.
+- Molly:Implementation part 1, basic of the GUI
+- Marlyn:Requirements and use cases. Documentation
+- Clara: Requirements and use cases. Tested the GUI
