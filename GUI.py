@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 import os
 import wave
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy as np
 
 class FileNavigation:
     def __init__(self, parent_frame):
@@ -57,8 +60,28 @@ class EditingOptions:
 
 class ViewMetadata:
     def __init__(self, parent_frame):
+        self.parent_frame = parent_frame
+        
+        # Create top left frame
+        self.top_left_frame = tk.Frame(self.parent_frame, bg="red")
+        self.top_left_frame.grid(row=0, column=0, sticky="nsew")
+        
+        # Create top right frame
+        self.top_right_frame = tk.Frame(self.parent_frame, bg="blue")
+        self.top_right_frame.grid(row=0, column=1, sticky="nsew")
+        
+        # Create bottom frame
+        self.bottom_frame = tk.Frame(self.parent_frame, bg="green")
+        self.bottom_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        
+        # Configure row and column weights to allow resizing
+        self.parent_frame.grid_rowconfigure(0, weight=1)
+        self.parent_frame.grid_rowconfigure(1, weight=1)
+        self.parent_frame.grid_columnconfigure(0, weight=1)
+        self.parent_frame.grid_columnconfigure(1, weight=1)
+        '''
         self.frame = ttk.Frame(parent_frame, padding="20")
-        self.frame.grid(row=0, column=2, sticky="nsew")
+        self.frame.grid(row=0, column=0, sticky="nsew")
 
         metadata_labels = ["Encoding", "Format", "Number of Channels", "Sample Rate", "File Size", "Duration"]
         self.metadata_widgets = {}
@@ -67,12 +90,22 @@ class ViewMetadata:
             ttk.Label(self.frame, text=label + ":").grid(row=i, column=0, sticky="w", padx=5, pady=5)
             self.metadata_widgets[label] = ttk.Label(self.frame, text="", anchor="w")
             self.metadata_widgets[label].grid(row=i, column=1, sticky="we", padx=5, pady=5)
+    
+        # Create frame for displaying audio visual
+        #self.audio_visual_frame = ttk.Frame(parent_frame, padding="20")
+        #self.audio_visual_frame.grid(row=0, column=1, sticky="nsew")
+
+        # Create frame for adding tags
+        #self.tags_frame = ttk.Frame(parent_frame, padding="20")
+        #self.tags_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
 
     def display_metadata(self, metadata):
         for key, value in metadata.items():
             if key in self.metadata_widgets:
                 self.metadata_widgets[key].config(text=str(value))
 
+'''
+    
 class AudioArchiveGUI:
     def __init__(self, root):
         self.root = root
@@ -91,12 +124,37 @@ class AudioArchiveGUI:
         self.notebook.add(self.edit_options.frame, text="Editing Options")
 
         # Metadata Viewing Section
-        self.view_metadata = ViewMetadata(self.notebook)
-        self.notebook.add(self.view_metadata.frame, text="View Metadata")
+        self.metadata_frame = tk.Frame(self.notebook)
+        self.metadata_frame.pack(fill=tk.BOTH, expand=True)
+        self.view_metadata = ViewMetadata(self.metadata_frame)
+
+        self.notebook.add(self.metadata_frame, text="Metadata")
+
+        #self.view_metadata = ViewMetadata(self.notebook)
+        #self.notebook.add(self.view_metadata.frame, text="View Metadata")
 
         # Populate the tree with the specified folder
         folder_path = "/Users/mollyhalverson/Desktop/Whitman/23-24/370/Mach_1_Project/Epoch123/ESMD"
         self.populate_tree_with_folder(folder_path)
+    
+    '''
+    def audio_visual(self):
+        # Data for plotting
+        t = np.arange(0.0, 2.0, 0.01)
+        s = 1 + np.sin(2 * np.pi * t)
+
+        fig, ax = plt.subplots()
+        ax.plot(t, s)
+
+        ax.set(xlabel='time (s)', ylabel='voltage (mV)',
+            title='About as simple as it gets, folks')
+        ax.grid()
+        
+        # Create an instance of ViewMetadata
+        view_metadata = ViewMetadata(self.root)
+        # Display audio visual plot
+        view_metadata.display_audio_visual(fig)
+        '''
 
     def populate_tree_with_folder(self, folder_path):
         self.file_nav.tree.delete(*self.file_nav.tree.get_children())
