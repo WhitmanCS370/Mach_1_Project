@@ -1,10 +1,11 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, StringVar
 import os
 import wave
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
+
 
 class FileNavigation:
     """
@@ -20,10 +21,12 @@ class FileNavigation:
         self.upload_option.grid(row=1, column=0, padx=5, pady=5, sticky="w")
 
         # Search bar
-        self.search_bar = ttk.Entry(self.frame, width=60)
+        self.search_entry = ttk.StringVar()
+        self.search_bar = ttk.Entry(self.frame, textvariable= self.search_entry, width=60)
         self.search_bar.grid(row=2, column=0, padx=5, pady=5, sticky="w")
 
-        search_button = ttk.Button(self.frame, text="Search") # Add search function/command
+        # Search button
+        search_button = ttk.Button(self.frame, text="Search", command=self.search) # Add search function/command
         search_button.grid(row=2, column=1, padx=5, pady=5)
 
         # File navigator box
@@ -51,6 +54,12 @@ class FileNavigation:
         file_path = filedialog.askopenfilename()
         if file_path:
             return file_path  # Return the file path for further processing in the main application
+
+    def search(self):
+        """
+        Add functionality to search bar
+        """
+        query = self.search_entry.get()
 
 class EditingOptions:
     """
