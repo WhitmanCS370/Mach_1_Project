@@ -14,16 +14,25 @@ class FileNavigation:
         self.frame = ttk.Frame(parent_frame, padding="20")
         self.frame.grid(row=0, column=0, sticky="nsew")
 
+        # File navigation
         self.file_label = ttk.Label(self.frame, text="Select File or Upload Sound:")
         self.file_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
         self.upload_option = ttk.Button(self.frame, text="Upload Sound", command=self.upload_sound)
         self.upload_option.grid(row=1, column=0, padx=5, pady=5, sticky="w")
 
+        # Search bar
+        self.search_bar = ttk.Entry(self.frame, width=60)
+        self.search_bar.grid(row=2, column=0, padx=5, pady=5, sticky="w")
+
+        search_button = ttk.Button(self.frame, text="Search") # Add search function/command
+        search_button.grid(row=2, column=1, padx=5, pady=5)
+
         self.tree = ttk.Treeview(self.frame, columns=("fullpath", "type"), show="tree", height=20)
         self.tree.grid(row=3, column=0, columnspan=3, padx=5, pady=5, sticky="nsew")
         self.tree.bind("<<TreeviewOpen>>", self.populate_tree)
 
+        # Scroll bar
         self.scrollbar = ttk.Scrollbar(self.frame, orient="vertical", command=self.tree.yview)
         self.scrollbar.grid(row=3, column=3, sticky="ns")
         self.tree.configure(yscrollcommand=self.scrollbar.set)
@@ -42,6 +51,7 @@ class FileNavigation:
     def upload_sound(self):
         file_path = filedialog.askopenfilename()
         if file_path:
+            #self.notebook.select(2) # Go to third tab (metadata)
             return file_path  # Return the file path for further processing in the main application
 
 class EditingOptions:
@@ -136,8 +146,11 @@ class AudioArchiveGUI:
 
         # Metadata Viewing Section
         self.metadata_frame = tk.Frame(self.notebook)
-        self.metadata_frame.pack(fill=tk.BOTH, expand=True)
         self.view_metadata = ViewMetadata(self.metadata_frame)
+        self.metadata_frame.grid(row=0, column=0, sticky="nsew")
+    
+        #self.metadata_frame.pack(fill=tk.BOTH, expand=True)
+        #self.view_metadata = ViewMetadata(self.metadata_frame)
 
         self.notebook.add(self.metadata_frame, text="Metadata")
 
