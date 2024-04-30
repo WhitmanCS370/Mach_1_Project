@@ -13,8 +13,6 @@ class FileNavigation:
     def __init__(self, parent_frame):
         self.frame = ttk.Frame(parent_frame, padding="20")
         self.frame.grid(row=0, column=0, sticky="nsew")
-
-        # File navigation
         self.file_label = ttk.Label(self.frame, text="Select File or Upload Sound:")
         self.file_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
@@ -28,6 +26,7 @@ class FileNavigation:
         search_button = ttk.Button(self.frame, text="Search") # Add search function/command
         search_button.grid(row=2, column=1, padx=5, pady=5)
 
+        # File navigator box
         self.tree = ttk.Treeview(self.frame, columns=("fullpath", "type"), show="tree", height=20)
         self.tree.grid(row=3, column=0, columnspan=3, padx=5, pady=5, sticky="nsew")
         self.tree.bind("<<TreeviewOpen>>", self.populate_tree)
@@ -51,7 +50,6 @@ class FileNavigation:
     def upload_sound(self):
         file_path = filedialog.askopenfilename()
         if file_path:
-            #self.notebook.select(2) # Go to third tab (metadata)
             return file_path  # Return the file path for further processing in the main application
 
 class EditingOptions:
@@ -90,10 +88,8 @@ class ViewMetadata:
         self.parent_frame.grid_rowconfigure(1, weight=1)
         self.parent_frame.grid_columnconfigure(0, weight=1)
         self.parent_frame.grid_columnconfigure(1, weight=1)
-        
-        #self.frame = ttk.Frame(parent_frame, padding="20")
-        #self.frame.grid(row=0, column=0, sticky="nsew")
 
+        # Populate metadata section
         metadata_labels = ["Encoding", "Format", "Number of Channels", "Sample Rate", "File Size", "Duration"]
         self.metadata_widgets = {}
 
@@ -102,6 +98,7 @@ class ViewMetadata:
             self.metadata_widgets[label] = ttk.Label(self.metadata_frame, text="", anchor="w")
             self.metadata_widgets[label].grid(row=i, column=1, sticky="we", padx=5, pady=5)
 
+        # Tag section
         self.tag_label = ttk.Label(self.tags_frame, text="Enter tags for the sound:")
         self.tag_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
@@ -116,9 +113,11 @@ class ViewMetadata:
             if key in self.metadata_widgets:
                 self.metadata_widgets[key].config(text=str(value))
 
-    def save_tags(self):
+    def save_tags(self): #FIXME#
+        """
+        Saves tags
+        """
         tags = self.tag_entry.get()
-        # You can add code here to save the tags
         print("Tags saved:", tags)
         self.root.destroy()        
 
@@ -153,9 +152,6 @@ class AudioArchiveGUI:
         #self.view_metadata = ViewMetadata(self.metadata_frame)
 
         self.notebook.add(self.metadata_frame, text="Metadata")
-
-        #self.view_metadata = ViewMetadata(self.notebook)
-        #self.notebook.add(self.view_metadata.frame, text="View Metadata")
 
         # Populate the tree with the specified folder
         folder_path = "/Users/mollyhalverson/Desktop/Whitman/23-24/370/Mach_1_Project/Epoch123/ESMD"
