@@ -61,12 +61,12 @@ class ViewMetadata:
         self.metadata_frame.grid(row=0, column=0, sticky="nsew")
         
         # Create audio visual frame (top right frame)
-        self.audio_visual_frame = tk.Frame(self.parent_frame, bg="blue")
-        self.audio_visual_frame.grid(row=0, column=1, sticky="nsew")
+        self.tags_frame = tk.Frame(self.parent_frame)
+        self.tags_frame.grid(row=0, column=1, sticky="nsew")
         
         # Create tags frame
-        self.tags_frame = tk.Frame(self.parent_frame, bg="green")
-        self.tags_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        self.audio_visual_frame = tk.Frame(self.parent_frame, bg="green")
+        self.audio_visual_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
         
         # Configure row and column weights to allow resizing
         self.parent_frame.grid_rowconfigure(0, weight=1)
@@ -85,10 +85,25 @@ class ViewMetadata:
             self.metadata_widgets[label] = ttk.Label(self.metadata_frame, text="", anchor="w")
             self.metadata_widgets[label].grid(row=i, column=1, sticky="we", padx=5, pady=5)
 
+        self.tag_label = ttk.Label(self.tags_frame, text="Enter tags for the sound:")
+        self.tag_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+
+        self.tag_entry = ttk.Entry(self.tags_frame, width=25)
+        self.tag_entry.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+
+        self.save_button = ttk.Button(self.tags_frame, text="Save", command=self.save_tags)
+        self.save_button.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+
     def display_metadata(self, metadata):
         for key, value in metadata.items():
             if key in self.metadata_widgets:
                 self.metadata_widgets[key].config(text=str(value))
+
+    def save_tags(self):
+        tags = self.tag_entry.get()
+        # You can add code here to save the tags
+        print("Tags saved:", tags)
+        self.root.destroy()        
 
 
     
