@@ -46,12 +46,6 @@ class EditingOptions:
         self.frame = ttk.Frame(parent_frame, padding="20")
         self.frame.grid(row=0, column=1, sticky="nsew")
 
-        #self.edit_metadata_button = ttk.Button(self.frame, text="Edit Metadata", command=self.edit_metadata)
-        #self.edit_metadata_button.grid(row=0, column=0, padx=10, pady=10)
-
-        #self.edit_sound_button = ttk.Button(self.frame, text="Edit Sound File", command=self.edit_sound)
-        #self.edit_sound_button.grid(row=0, column=1, padx=10, pady=10)
-
     def edit_metadata(self):
         pass
 
