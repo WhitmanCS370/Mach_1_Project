@@ -62,49 +62,41 @@ class ViewMetadata:
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
         
-        # Create top left frame
-        self.top_left_frame = tk.Frame(self.parent_frame, bg="red")
-        self.top_left_frame.grid(row=0, column=0, sticky="nsew")
+        # Create metadata frame (top left frame)
+        self.metadata_frame = tk.Frame(self.parent_frame)
+        self.metadata_frame.grid(row=0, column=0, sticky="nsew")
         
-        # Create top right frame
-        self.top_right_frame = tk.Frame(self.parent_frame, bg="blue")
-        self.top_right_frame.grid(row=0, column=1, sticky="nsew")
+        # Create audio visual frame (top right frame)
+        self.audio_visual_frame = tk.Frame(self.parent_frame, bg="blue")
+        self.audio_visual_frame.grid(row=0, column=1, sticky="nsew")
         
-        # Create bottom frame
-        self.bottom_frame = tk.Frame(self.parent_frame, bg="green")
-        self.bottom_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        # Create tags frame
+        self.tags_frame = tk.Frame(self.parent_frame, bg="green")
+        self.tags_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
         
         # Configure row and column weights to allow resizing
         self.parent_frame.grid_rowconfigure(0, weight=1)
         self.parent_frame.grid_rowconfigure(1, weight=1)
         self.parent_frame.grid_columnconfigure(0, weight=1)
         self.parent_frame.grid_columnconfigure(1, weight=1)
-        '''
-        self.frame = ttk.Frame(parent_frame, padding="20")
-        self.frame.grid(row=0, column=0, sticky="nsew")
+        
+        #self.frame = ttk.Frame(parent_frame, padding="20")
+        #self.frame.grid(row=0, column=0, sticky="nsew")
 
         metadata_labels = ["Encoding", "Format", "Number of Channels", "Sample Rate", "File Size", "Duration"]
         self.metadata_widgets = {}
 
         for i, label in enumerate(metadata_labels):
-            ttk.Label(self.frame, text=label + ":").grid(row=i, column=0, sticky="w", padx=5, pady=5)
-            self.metadata_widgets[label] = ttk.Label(self.frame, text="", anchor="w")
+            ttk.Label(self.metadata_frame, text=label + ":").grid(row=i, column=0, sticky="w", padx=5, pady=5)
+            self.metadata_widgets[label] = ttk.Label(self.metadata_frame, text="", anchor="w")
             self.metadata_widgets[label].grid(row=i, column=1, sticky="we", padx=5, pady=5)
-    
-        # Create frame for displaying audio visual
-        #self.audio_visual_frame = ttk.Frame(parent_frame, padding="20")
-        #self.audio_visual_frame.grid(row=0, column=1, sticky="nsew")
-
-        # Create frame for adding tags
-        #self.tags_frame = ttk.Frame(parent_frame, padding="20")
-        #self.tags_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
 
     def display_metadata(self, metadata):
         for key, value in metadata.items():
             if key in self.metadata_widgets:
                 self.metadata_widgets[key].config(text=str(value))
 
-'''
+
     
 class AudioArchiveGUI:
     def __init__(self, root):
