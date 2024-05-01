@@ -2,12 +2,14 @@ import os
 import json
 from pydub import AudioSegment
 from pydub.exceptions import CouldntDecodeError
+import yaml
 
 class MetaData():
     def __init__(self):
         self.tags = {}
         self.current_dir = os.path.dirname(os.path.abspath(__file__))
         self.metadata_file_path = os.path.join(self.current_dir, "metatagdata.json")
+        self.tag_file_path = os.path.join(self.current_dir, "tags.yaml")
 
         if not os.path.exists(self.metadata_file_path):
             with open(self.metadata_file_path, "w") as file:
@@ -79,4 +81,3 @@ class MetaData():
 
         with open(self.metadata_file_path, "w") as file:
             json.dump(data, file, indent=4)
-

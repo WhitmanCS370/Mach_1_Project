@@ -1,9 +1,10 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QStackedWidget
 import sys
 import e123utils as eutils
 import os
 
 from FileNavigation import FileNavigation
+from MetaDataEditor import MetaDataEditor
 from Metadata import MetaData
 
 class GUI2(QMainWindow):
@@ -15,22 +16,20 @@ class GUI2(QMainWindow):
         self.metaData = MetaData()
         self.metaData.set_tags()
 
-        self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
-        self.layout = QHBoxLayout()
-        self.central_widget.setLayout(self.layout)
+        # Create a QStackedWidget and set it as the central widget
+        self.stacked_widget = QStackedWidget()
+        self.setCentralWidget(self.stacked_widget)
 
-        self.file_nav = FileNavigation(self, self.metaData)
-        self.file_nav.setFixedWidth(300)
-        self.layout.addWidget(self.file_nav)
+        # Add the FileNavigation widget to the QStackedWidget
+        self.file_nav = FileNavigation(self)
+        # self.file_nav.setFixedWidth(300)
+        self.stacked_widget.addWidget(self.file_nav)
 
-        self.info_panel = QWidget()
-        self.info_layout = QVBoxLayout()
-        self.info_panel.setLayout(self.info_layout)
-        self.layout.addWidget(self.info_panel)
+        # Add the MetaDataEditor widget to the QStackedWidget
+        self.meta_data_editor = MetaDataEditor(self)
+        self.stacked_widget.addWidget(self.meta_data_editor)
 
         self.audio_player = None
-
 
     def write_metadata_for_dir(self, dir_path):
         for dirpath, dirnames, filenames in os.walk(dir_path):
@@ -38,6 +37,13 @@ class GUI2(QMainWindow):
                 file_path = os.path.join(dirpath, filename)
                 self.metaData.write_metadata(file_path)
 
+    # Add a method to switch to the FileNavigation widget
+    def show_file_nav(self):
+        self.stacked_widget.setCurrentIndex(0)
+
+    # Add a method to switch to the MetaDataEditor widget
+    def show_meta_data_editor(self):
+        self.stacked_widget.setCurrentIndex(1)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

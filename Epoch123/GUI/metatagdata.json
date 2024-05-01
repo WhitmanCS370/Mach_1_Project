@@ -1,13 +1,4 @@
 {
-    "toaster-1.wav": {
-        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/toast/toaster-1.wav",
-        "channels": 1,
-        "sample_width": 4,
-        "duration": 6.07,
-        "file_size": 874412,
-        "sample_rate": 48000,
-        "tags": []
-    },
     "toaster.wav": {
         "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/toast/toaster.wav",
         "channels": 2,
@@ -42,15 +33,6 @@
         "duration": 3.49,
         "file_size": 38498,
         "sample_rate": 11025,
-        "tags": []
-    },
-    "duck_quack.wav": {
-        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/animals/duck_quack.wav",
-        "channels": 1,
-        "sample_width": 1,
-        "duration": 0.18,
-        "file_size": 2024,
-        "sample_rate": 11127,
         "tags": []
     },
     "coffee-slurp-2.wav": {
@@ -123,6 +105,87 @@
         "duration": 1.3,
         "file_size": 343202,
         "sample_rate": 44100,
+        "tags": []
+    },
+    "ominous.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/sound_effects/ominous.wav",
+        "channels": 1,
+        "sample_width": 2,
+        "duration": 3.72,
+        "file_size": 82036,
+        "sample_rate": 11025,
+        "tags": []
+    },
+    "ocean.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/sound_effects/ocean.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 3.05,
+        "file_size": 33674,
+        "sample_rate": 11025,
+        "tags": []
+    },
+    "phone_ring2.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/sound_effects/phone_ring2.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 1.92,
+        "file_size": 15438,
+        "sample_rate": 8000,
+        "tags": []
+    },
+    "lion_roar.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/animals/lion_roar.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 0.99,
+        "file_size": 10914,
+        "sample_rate": 11025,
+        "tags": []
+    },
+    "seagull141.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/animals/seagull141.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 9.52,
+        "file_size": 76244,
+        "sample_rate": 8000,
+        "tags": []
+    },
+    "wolf_howl.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/animals/wolf_howl.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 6.85,
+        "file_size": 75569,
+        "sample_rate": 11025,
+        "tags": []
+    },
+    "soda_pour2.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/sound_effects/soda_pour2.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 4.93,
+        "file_size": 108722,
+        "sample_rate": 22050,
+        "tags": []
+    },
+    "duck_quack.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/animals/duck_quack.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 0.18,
+        "file_size": 2024,
+        "sample_rate": 11127,
+        "tags": []
+    },
+    "toaster-1.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/toast/toaster-1.wav",
+        "channels": 1,
+        "sample_width": 4,
+        "duration": 6.07,
+        "file_size": 874412,
+        "sample_rate": 48000,
         "tags": []
     }
 }
