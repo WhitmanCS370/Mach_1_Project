@@ -1,7 +1,7 @@
 from pydub import AudioSegment
 from pydub.effects import normalize
 from pydub.playback import play
-import e123utils
+import Epoch123.GUI.e123utils as e123utils
 
 def save_audio_option():
     while True:

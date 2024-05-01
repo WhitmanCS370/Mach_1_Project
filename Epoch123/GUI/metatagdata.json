@@ -1,0 +1,128 @@
+{
+    "toaster-1.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/toast/toaster-1.wav",
+        "channels": 1,
+        "sample_width": 4,
+        "duration": 6.07,
+        "file_size": 874412,
+        "sample_rate": 48000,
+        "tags": []
+    },
+    "toaster.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/toast/toaster.wav",
+        "channels": 2,
+        "sample_width": 4,
+        "duration": 3.33,
+        "file_size": 971706,
+        "sample_rate": 48000,
+        "tags": []
+    },
+    "frogs.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/animals/frogs.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 3.2,
+        "file_size": 35282,
+        "sample_rate": 11025,
+        "tags": []
+    },
+    "goat.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/animals/goat.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 1.01,
+        "file_size": 11164,
+        "sample_rate": 11025,
+        "tags": []
+    },
+    "horse2.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/animals/horse2.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 3.49,
+        "file_size": 38498,
+        "sample_rate": 11025,
+        "tags": []
+    },
+    "duck_quack.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/animals/duck_quack.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 0.18,
+        "file_size": 2024,
+        "sample_rate": 11127,
+        "tags": []
+    },
+    "coffee-slurp-2.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/coffee/coffee-slurp-2.wav",
+        "channels": 2,
+        "sample_width": 4,
+        "duration": 1.5,
+        "file_size": 396944,
+        "sample_rate": 44100,
+        "tags": []
+    },
+    "coffee-slurp-3.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/coffee/coffee-slurp-3.wav",
+        "channels": 2,
+        "sample_width": 4,
+        "duration": 1.25,
+        "file_size": 330794,
+        "sample_rate": 44100,
+        "tags": []
+    },
+    "coffee-slurp-7.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/coffee/coffee-slurp-7.wav",
+        "channels": 2,
+        "sample_width": 4,
+        "duration": 1.5,
+        "file_size": 396944,
+        "sample_rate": 44100,
+        "tags": []
+    },
+    "coffee-slurp-6.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/coffee/coffee-slurp-6.wav",
+        "channels": 2,
+        "sample_width": 4,
+        "duration": 1.03,
+        "file_size": 271364,
+        "sample_rate": 44100,
+        "tags": []
+    },
+    "coffee-slurp-4.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/coffee/coffee-slurp-4.wav",
+        "channels": 2,
+        "sample_width": 4,
+        "duration": 0.88,
+        "file_size": 231572,
+        "sample_rate": 44100,
+        "tags": []
+    },
+    "coffee-slurp-5.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/coffee/coffee-slurp-5.wav",
+        "channels": 2,
+        "sample_width": 4,
+        "duration": 1.41,
+        "file_size": 372140,
+        "sample_rate": 44100,
+        "tags": []
+    },
+    "coffee.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/coffee/coffee.wav",
+        "channels": 2,
+        "sample_width": 4,
+        "duration": 1.03,
+        "file_size": 271364,
+        "sample_rate": 44100,
+        "tags": []
+    },
+    "coffee-slurp-8.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/coffee/coffee-slurp-8.wav",
+        "channels": 2,
+        "sample_width": 4,
+        "duration": 1.3,
+        "file_size": 343202,
+        "sample_rate": 44100,
+        "tags": []
+    }
+}

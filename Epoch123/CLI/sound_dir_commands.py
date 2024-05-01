@@ -1,5 +1,5 @@
 import os
-import e123utils
+import Epoch123.GUI.e123utils as e123utils
 
 def list_sounds(sound_dir: str = None, search_term = '') -> None:
     """

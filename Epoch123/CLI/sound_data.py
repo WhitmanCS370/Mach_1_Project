@@ -3,7 +3,7 @@ import wave
 import numpy as np
 import curses
 
-import e123utils
+import Epoch123.GUI.e123utils as e123utils
 
 def sound_visualize(stdscr: 'curses._CursesWindow', sound_file: str) -> None:
     """

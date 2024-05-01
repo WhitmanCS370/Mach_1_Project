@@ -4,7 +4,7 @@ import os
 import numpy as np
 import glob
 
-import e123utils
+import Epoch123.GUI.e123utils as e123utils
 
 def play_sound(sound_file: str) -> None:
     """
