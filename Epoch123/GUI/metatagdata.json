@@ -187,5 +187,32 @@
         "file_size": 874412,
         "sample_rate": 48000,
         "tags": []
+    },
+    "tutti_frutti.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/tutti_frutti.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 2.46,
+        "file_size": 27180,
+        "sample_rate": 11025,
+        "tags": []
+    },
+    "bird.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/bird.wav",
+        "channels": 1,
+        "sample_width": 1,
+        "duration": 2.44,
+        "file_size": 53804,
+        "sample_rate": 22050,
+        "tags": []
+    },
+    "tiny_tim.wav": {
+        "file_path": "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/tiny_tim.wav",
+        "channels": 1,
+        "sample_width": 2,
+        "duration": 68.44,
+        "file_size": 170370,
+        "sample_rate": 11025,
+        "tags": []
     }
 }

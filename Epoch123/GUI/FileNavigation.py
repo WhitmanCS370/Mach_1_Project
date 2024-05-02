@@ -1,11 +1,12 @@
 import os
-from PySide6.QtWidgets import QFrame, QGridLayout, QLabel, QTreeView, QFileSystemModel, QMenu, QMessageBox, QAbstractItemView, QVBoxLayout, QSplitter, QWidget, QHBoxLayout
+from PySide6.QtWidgets import QFrame, QLabel, QTreeView, QFileSystemModel, QMenu, QMessageBox, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog
 from PySide6.QtGui import  QAction 
 from PySide6.QtCore import Qt
-from WaveformDisplay import WaveformDisplay
+from WaveformDisplay import WaveformDisplayFN
 import e123utils as eutils
 import shutil
 import tempfile
+from Button import Button
 
 class CustomFileSystemModel(QFileSystemModel):
     def flags(self, index):
@@ -22,16 +23,23 @@ class FileNavigation(QFrame):
         super().__init__(gui)
         self.gui = gui
         self.meta_data = self.gui.metaData
+
+        # set the background color to #5C3566
+        self.setStyleSheet("background-color: #232323")
         
         self.model = CustomFileSystemModel()
         self.model.setReadOnly(False)  # Make the model editable
 
         # Create the layout
         self.layout = QHBoxLayout()
+        # Set the layout to the main window
+        self.setLayout(self.layout)
         # self.layout.setSpacing(0)
         # self.layout.setContentsMargins(0, 0, 0, 0)
         # Create two widgets
         self.file_nav_widget = QTreeView()
+        # set the background color to #5C3566
+        self.file_nav_widget.setStyleSheet("background-color: #151515")
         self.file_nav_widget.setMinimumWidth(200)
         self.file_nav_widget.setMaximumWidth(200)
         self.file_nav_widget.setModel(self.model)
@@ -50,8 +58,20 @@ class FileNavigation(QFrame):
         self.info_widget.setLayout(self.info_layout)
         self.layout.addWidget(self.info_widget)
 
-        # Set the layout to the main window
-        self.setLayout(self.layout)
+            # Welcome widget
+        self.welcome_widget = QLabel("Welcome! Select a file to start.")
+        self.welcome_widget.setStyleSheet("font-size: 18pt; color: white;")
+        self.welcome_widget.setAlignment(Qt.AlignCenter)
+        # upload a file
+        self.upload_file_button = Button("Upload File", self.upload_file, setFixedWidth=200)
+        self.info_layout.addWidget(self.upload_file_button)
+        # record a file
+        self.record_file_button = Button("Record", self.record_file, setFixedWidth=200)
+        self.info_layout.addWidget(self.record_file_button)
+        # 
+        # add the welcome widget to the info layout
+        self.info_layout.addWidget(self.welcome_widget)
+
 
         # Connect the signals
         self.file_nav_widget.clicked.connect(self.on_tree_item_clicked)
@@ -60,6 +80,42 @@ class FileNavigation(QFrame):
 
 
         self.deleted_files = {}
+
+    def upload_file(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, 'Upload File', '', 'Audio Files (*.wav *.mp3)')
+        if file_path:
+            file_name = os.path.basename(file_path)
+            
+            # Dialog to ask user to edit or save directly
+            msg_box = QMessageBox(self)
+            msg_box.setWindowTitle("Upload Action")
+            msg_box.setText("Would you like to edit the file or save it directly?")
+            edit_button = msg_box.addButton("Edit", QMessageBox.AcceptRole)
+            save_button = msg_box.addButton("Save", QMessageBox.AcceptRole)
+            msg_box.addButton("Cancel", QMessageBox.RejectRole)
+            msg_box.exec_()
+            
+            if msg_box.clickedButton() == edit_button:
+                # Open file in editor
+                self.gui.show_sound_editor()
+                self.gui.sound_editor.set_file_to_edit(file_path)
+            elif msg_box.clickedButton() == save_button:
+                # Save directly
+                self.save_uploaded_file(file_path, file_name)
+
+
+    def save_uploaded_file(self, file_path, file_name):
+        # Prompt user to choose directory within ESMD to save the file
+        dest_dir = QFileDialog.getExistingDirectory(self, "Select Directory", eutils.get_main_sound_dir_path('Epoch123/ESMD'))
+        if dest_dir:
+            dest_path = os.path.join(dest_dir, file_name)
+            shutil.copy(file_path, dest_path)
+            # Update the metadata and refresh view
+            self.meta_data.write_metadata(dest_path)
+            self.model.setRootPath(eutils.get_main_sound_dir_path('Epoch123/ESMD'))
+
+    def record_file(self):
+        pass
 
     def show_context_menu(self, position):
         index = self.file_nav_widget.indexAt(position)
@@ -156,7 +212,12 @@ class FileNavigation(QFrame):
                 
     def on_tree_item_clicked(self, index):
         file_path = self.model.filePath(index)
-        if os.path.isfile(file_path):  # Check if the clicked item is a file
+        if os.path.isfile(file_path):
             if self.info_layout.count() > 0:
-                self.info_layout.itemAt(0).widget().deleteLater()
-            self.info_layout.addWidget(WaveformDisplay(self.gui, file_path))
+                # Clear the info layout
+                for i in reversed(range(self.info_layout.count())): 
+                    widget = self.info_layout.itemAt(i).widget()
+                    if widget is not None:
+                        widget.deleteLater()
+            # Add the waveform display widget
+            self.info_layout.addWidget(WaveformDisplayFN(self.gui, file_path))

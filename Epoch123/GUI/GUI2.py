@@ -5,13 +5,14 @@ import os
 
 from FileNavigation import FileNavigation
 from MetaDataEditor import MetaDataEditor
+from SoundEditor import SoundEditor
 from Metadata import MetaData
 
 class GUI2(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Epoch123")
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(850, 650)
 
         self.metaData = MetaData()
         self.metaData.set_tags()
@@ -29,6 +30,11 @@ class GUI2(QMainWindow):
         self.meta_data_editor = MetaDataEditor(self)
         self.stacked_widget.addWidget(self.meta_data_editor)
 
+        # Add the SoundEditor widget to the QStackedWidget
+        self.sound_editor = SoundEditor(self)
+        self.stacked_widget.addWidget(self.sound_editor)
+
+
         self.audio_player = None
 
     def write_metadata_for_dir(self, dir_path):
@@ -44,6 +50,9 @@ class GUI2(QMainWindow):
     # Add a method to switch to the MetaDataEditor widget
     def show_meta_data_editor(self):
         self.stacked_widget.setCurrentIndex(1)
+
+    def show_sound_editor(self):
+        self.stacked_widget.setCurrentIndex(2)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
