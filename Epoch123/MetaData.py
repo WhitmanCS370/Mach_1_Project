@@ -266,12 +266,7 @@ class MetaDataWidget(QTableWidget):
         # set the minimum height of the table
         self.setMinimumHeight(200)
         self.setMinimumWidth(300)
-        # self.setMaximumWidth(600)
-        # center the widget
-        # self.setAlignment(Qt.AlignCenter)
-        # have each column be the same width
         self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        # self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
 
         self.layout.addWidget(self)
 
@@ -280,50 +275,34 @@ class MetaDataWidget(QTableWidget):
         self.fetch_and_display_metadata()
 
     def fetch_and_display_metadata(self):
-        metadata = self.metadatadb.get_metadata(self.file_path)
-        if metadata:
-            # Unpack the metadata based on how it's returned from your database
-            file_id, file_name, file_path, num_channels, sample_rate, file_size, duration, description = metadata
-            # Define tags
-            tags = ', '.join(self.metadatadb.get_tags_for_file(file_path))
+        try:
+            metadata = self.metadatadb.get_metadata(self.file_path)
+            if metadata:
+                # Unpack the metadata based on how it's returned from your database
+                file_id, file_name, file_path, num_channels, sample_rate, file_size, duration, description = metadata
+                # Define tags
+                tags = ', '.join(self.metadatadb.get_tags_for_file(file_path))
 
-            data = [
-                ("File Name", file_name),
-                ("File Path", file_path),
-                ("Num of Channels", str(num_channels)),
-                ("Sample Rate", f"{sample_rate} Hz"),
-                ("File Size", f"{file_size} KB"),
-                ("Duration", f"{duration} seconds"),
-                ("Description", description),
-                ("Tags", tags)
-            ]
+                data = [
+                    ("File Name", file_name),
+                    ("File Path", file_path),
+                    ("Num of Channels", str(num_channels)),
+                    ("Sample Rate", f"{sample_rate} Hz"),
+                    ("File Size", f"{file_size} KB"),
+                    ("Duration", f"{duration} seconds"),
+                    ("Description", description),
+                    ("Tags", tags)
+                ]
 
-            self.setItem(0, 0, QTableWidgetItem(data[0][0]))
-            self.setItem(0, 1, QTableWidgetItem(data[0][1]))
-            self.item(0, 1).setTextAlignment(Qt.AlignCenter)
-            self.setItem(0, 2, QTableWidgetItem(data[1][0]))
-            self.setItem(0, 3, QTableWidgetItem(data[1][1]))
-            self.item(0, 3).setTextAlignment(Qt.AlignCenter)
-            self.setItem(1, 0, QTableWidgetItem(data[2][0]))
-            self.setItem(1, 1, QTableWidgetItem(data[2][1]))
-            self.item(1, 1).setTextAlignment(Qt.AlignCenter)
-            self.setItem(1, 2, QTableWidgetItem(data[3][0]))
-            self.setItem(1, 3, QTableWidgetItem(data[3][1]))
-            self.item(1, 3).setTextAlignment(Qt.AlignCenter)
-            self.setItem(2, 0, QTableWidgetItem(data[4][0]))
-            self.setItem(2, 1, QTableWidgetItem(data[4][1]))
-            self.item(2, 1).setTextAlignment(Qt.AlignCenter)
-            self.setItem(2, 2, QTableWidgetItem(data[5][0]))
-            self.setItem(2, 3, QTableWidgetItem(data[5][1]))
-            self.item(2, 3).setTextAlignment(Qt.AlignCenter)
-            self.setItem(3, 0, QTableWidgetItem(data[6][0]))
-            self.setItem(3, 1, QTableWidgetItem(data[6][1]))
-            self.item(3, 1).setTextAlignment(Qt.AlignCenter)
-            self.setItem(3, 2, QTableWidgetItem(data[7][0]))
-            self.setItem(3, 3, QTableWidgetItem(data[7][1]))
-            self.item(3, 3).setTextAlignment(Qt.AlignCenter)
+                for i in range(4):
+                    for j in range(2):
+                        self.setItem(i, j*2, QTableWidgetItem(data[i*2+j][0]))
+                        self.setItem(i, j*2+1, QTableWidgetItem(data[i*2+j][1]))
+                        self.item(i, j*2+1).setTextAlignment(Qt.AlignCenter)
 
-
-
-        else:
-            print("No metadata found for this file path.")
+            else:
+                QMessageBox.warning(None, "No Metadata Found", "No metadata found for this file path.")
+                logging.warning("No metadata found for this file path.")
+        except Exception as e:
+            QMessageBox.critical(None, "Error Fetching Metadata", f"An error occurred while fetching and displaying metadata: {e}")
+            logging.error(f"An error occurred while fetching and displaying metadata: {e}")
