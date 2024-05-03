@@ -103,33 +103,55 @@ class MetaDataDB:
         else:
             logging.info(f"Metadata for {file_path} already exists. Skipping insertion.")
 
-# Rest of the methods in the class remain unchanged
-
-
-    def write_metadata(self, file_path, num_channels, sample_rate, file_size, duration, description, tags):
+    def write_metadata(self, file_path, num_channels=None, sample_rate=None, file_size=None, duration=None, description=None, tags=None):
         try:
             self.conn = sqlite3.connect(self.db_path)
             self.cursor = self.conn.cursor()
 
-            # Insert the file metadata
-            self.cursor.execute('''
-                INSERT INTO audio_files (file_name, file_path, num_channels, sample_rate, file_size, duration, description)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (os.path.basename(file_path), file_path, num_channels, sample_rate, file_size, duration, description))
-
-            file_id = self.cursor.lastrowid
-
-            # Insert the tags
-            for tag in tags:
+            if self.file_already_exists(file_path):
+                # Update the file metadata
                 self.cursor.execute('''
-                    INSERT OR IGNORE INTO tags (tag_name)
-                    VALUES (?)
-                ''', (tag,))
+                    UPDATE audio_files 
+                    SET file_name = ?, num_channels = ?, sample_rate = ?, file_size = ?, duration = ?, description = ?
+                    WHERE file_path = ?
+                ''', (os.path.basename(file_path), num_channels, sample_rate, file_size, duration, description, file_path))
 
+                file_id = self.cursor.execute("SELECT file_id FROM audio_files WHERE file_path = ?", (file_path,)).fetchone()[0]
+
+                # Update the tags
+                if tags is not None:
+                    for tag in tags:
+                        self.cursor.execute('''
+                            INSERT OR IGNORE INTO tags (tag_name)
+                            VALUES (?)
+                        ''', (tag,))
+
+                        self.cursor.execute('''
+                            INSERT OR IGNORE INTO file_tags (file_id, tag_id)
+                            VALUES (?, (SELECT tag_id FROM tags WHERE tag_name = ?))
+                        ''', (file_id, tag))
+
+            else:
+                # Insert the file metadata
                 self.cursor.execute('''
-                    INSERT INTO file_tags (file_id, tag_id)
-                    VALUES (?, (SELECT tag_id FROM tags WHERE tag_name = ?))
-                ''', (file_id, tag))
+                    INSERT INTO audio_files (file_name, file_path, num_channels, sample_rate, file_size, duration, description)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                ''', (os.path.basename(file_path), file_path, num_channels, sample_rate, file_size, duration, description))
+
+                file_id = self.cursor.lastrowid
+
+                # Insert the tags
+                if tags is not None:
+                    for tag in tags:
+                        self.cursor.execute('''
+                            INSERT OR IGNORE INTO tags (tag_name)
+                            VALUES (?)
+                        ''', (tag,))
+
+                        self.cursor.execute('''
+                            INSERT INTO file_tags (file_id, tag_id)
+                            VALUES (?, (SELECT tag_id FROM tags WHERE tag_name = ?))
+                        ''', (file_id, tag))
 
             self.conn.commit()
         except sqlite3.Error as e:
@@ -140,12 +162,13 @@ class MetaDataDB:
                 self.conn.close()
 
     def rename_file(self, old_path, new_path):
+        new_name = os.path.basename(new_path)
         query = '''
             UPDATE audio_files
-            SET file_path = ?
+            SET file_path = ?, file_name = ?
             WHERE file_path = ?
         '''
-        self.execute_query(query, (new_path, old_path))
+        self.execute_query(query, (new_path, new_name, old_path))
 
     def delete_file(self, file_path):
         query = '''

@@ -10,6 +10,7 @@ from pydub import AudioSegment
 import tempfile
 import logging
 import shutil
+from Button import Button
 from MetaData import MetaDataWidget
 
 class CustomFileSystemModel(QFileSystemModel):
@@ -53,7 +54,7 @@ class FileNavigationWidget(QFrame):
         super().__init__(parent)
         self.setStyleSheet("background-color: #232323")
         self.setLayout(QHBoxLayout())
-        self.model = CustomFileSystemModel()
+        self.model = CustomFileSystemModel(parent)
         self.model.setReadOnly(False)
         self.plot_widget = WaveformPlotWidget(parent)
         self.deleted_files = {}
@@ -87,10 +88,20 @@ class FileNavigationWidget(QFrame):
         self.plot_widget.layout.addWidget(button_widget)
         self.plot_widget.layout.addWidget(self.metadata_widget)
         self.info_widget.layout().addWidget(self.plot_widget)
+        self.info_widget.layout().addLayout(self.edit_buttons())
         self.plot_widget.hide()
         self.file_tree.clicked.connect(self.on_file_selected)
         self.file_tree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.file_tree.customContextMenuRequested.connect(self.show_context_menu)
+
+    def edit_buttons(self):
+        edit_buttons_layout = QHBoxLayout()
+        edit_buttons_layout.setSpacing(10)
+        edit_buttons_layout.setAlignment(Qt.AlignCenter)
+        edit_buttons_layout.addWidget(Button("Edit File", None))
+        edit_buttons_layout.addWidget(Button("Delete File", None))
+        return edit_buttons_layout
+    
 
     def setup_file_tree(self):
         self.file_tree = CustomTreeView()
@@ -155,7 +166,8 @@ class FileNavigationWidget(QFrame):
         index = self.file_tree.indexAt(position)
         context_menu = QMenu(self)
 
-        rename_action = self.create_action('Rename', lambda: QTreeView.edit(self.file_tree, index))
+        # rename_action = self.create_action('Rename', lambda: QTreeView.edit(self.file_tree, index))
+        rename_action = self.create_action('Rename', lambda: self.rename_file(index))
         delete_action = self.create_action('Delete', lambda: self.delete_file(self.model.filePath(index)))
         create_folder_action = self.create_action('Create Folder', lambda: self.create_folder(index))
         undo_action = self.create_action('Undo Delete', self.undo_delete)
@@ -174,6 +186,10 @@ class FileNavigationWidget(QFrame):
         action.triggered.connect(func)
         return action
 
+
+    def refresh_view(self):
+        self.model.setRootPath(self.root_path)
+    
     def delete_file(self, file_path):
         if QMessageBox.question(self, 'Delete file', 'Are you sure you want to delete this file?', QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
             temp_file_path = self.get_unique_temp_path(os.path.basename(file_path))
@@ -193,19 +209,34 @@ class FileNavigationWidget(QFrame):
             self.parent.metaDataDB.insert_metadata(original_file_path)
             self.refresh_view()
 
-    def refresh_view(self):
-        self.model.setRootPath(self.root_path)
-
-    def create_folder(self, index=None):
+    def get_parent_path(self, index):
         if index and index.isValid():
             file_path = self.model.filePath(index)
             if os.path.isfile(file_path):
-                parent_path = os.path.dirname(file_path)
+                return os.path.dirname(file_path)
             else:
-                parent_path = file_path
+                return file_path
         else:
-            parent_path = self.root_path
+            return self.root_path
 
+    def rename_file(self, index):
+        if index and index.isValid():
+            file_path = self.model.filePath(index)
+            new_name = QTreeView.edit(self.file_tree, index)
+            if new_name is None:
+                return
+            new_path = os.path.join(self.get_parent_path(index), new_name)
+            if os.path.isfile(file_path):
+                self.parent.metaDataDB.rename_file(file_path, new_path)
+            else:
+                for root, dirs, files in os.walk(file_path):
+                    for file in files:
+                        full_path = os.path.join(root, file)
+                        self.parent.metaDataDB.rename_file(full_path, new_path)
+        self.refresh_view()
+
+    def create_folder(self, index=None):
+        parent_path = self.get_parent_path(index)
         default_folder_name = "New Folder"
         folder_path = os.path.join(parent_path, default_folder_name)
         os.mkdir(folder_path)
@@ -213,3 +244,15 @@ class FileNavigationWidget(QFrame):
         new_index = self.model.index(folder_path)
         self.file_tree.setCurrentIndex(new_index)
         self.file_tree.edit(new_index, QTreeView.EditKeyPressed, None)
+
+    def delete_file(self, file_path):
+        if os.path.exists(file_path) and QMessageBox.question(self, 'Delete file', 'Are you sure you want to delete this file?', QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
+            temp_file_path = self.get_unique_temp_path(os.path.basename(file_path))
+            if os.path.isfile(file_path):
+                shutil.move(file_path, temp_file_path)
+                self.parent.metaDataDB.delete_file(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+                os.mkdir(temp_file_path)
+            self.deleted_files[temp_file_path] = file_path
+            self.refresh_view()

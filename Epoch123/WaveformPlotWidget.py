@@ -44,7 +44,7 @@ class WaveformPlotWidget(QWidget):
         self.position_line = self.ax.axvline(0, color='gray', lw=1)
         self.position_line.set_zorder(3) 
 
-        self.span_selector = SpanSelector(self.ax, self.on_select, 'horizontal', useblit=True, props=dict(alpha=0.3, facecolor='yellow'))
+        self.span_selector = SpanSelector(self.ax, self.on_select, 'horizontal', useblit=True, props=dict(alpha=0.3, facecolor='pink'))
 
 
     def update_plot(self, data, fs, audio):
@@ -97,7 +97,7 @@ class WaveformPlotWidget(QWidget):
 
         if xmax - xmin > 1:  # Only consider selections larger than 1 unit
             self.selected_region = (xmin, xmax)
-            self.selection_rect = self.ax.axvspan(xmin, xmax, color='blue', alpha=0.3)
+            self.selection_rect = self.ax.axvspan(xmin, xmax, color='pink', alpha=0.3)
             self.position_line.set_xdata([xmin])
         else:
             self.position_line.set_xdata([0])  # Set position line back to 0 if selection is unselected
