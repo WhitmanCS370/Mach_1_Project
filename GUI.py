@@ -24,10 +24,10 @@ class FileNavigation:
         self.search_bar = ttk.Entry(self.frame, width=60)
         self.search_bar.grid(row=2, column=0, padx=5, pady=5, sticky="w")
 
-        search_button = ttk.Button(self.frame, text="Search") # Add search function/command
-        self.search_entry = ttk.StringVar()
+        self.search_entry = tk.StringVar()  # Corrected here
         self.search_bar = ttk.Entry(self.frame, textvariable= self.search_entry, width=60)
         self.search_bar.grid(row=2, column=0, padx=5, pady=5, sticky="w")
+
 
         # Search button
         search_button = ttk.Button(self.frame, text="Search", command=self.search) # Add search function/command
@@ -167,7 +167,7 @@ class AudioArchiveGUI:
         self.notebook.add(self.metadata_frame, text="Metadata")
 
         # Populate the tree with the specified folder
-        folder_path = "/Users/mollyhalverson/Desktop/Whitman/23-24/370/Mach_1_Project/Epoch123/ESMD"
+        folder_path = "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD"
         self.populate_tree_with_folder(folder_path)
 
     def populate_tree_with_folder(self, folder_path):
