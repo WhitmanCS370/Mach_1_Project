@@ -2,7 +2,8 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget
 from PySide6.QtGui import QPalette, QColor
 from PySide6.QtCore import Qt
-from FileNavigationWidget import FileNavigationWidget
+from FileNavigationFrame import FileNavigationFrame
+from SoundEditorFrame import SoundEditorFrame
 from MetaData import MetaDataDB
 import e123utils as eutils
 import os
@@ -26,8 +27,10 @@ class MainWindow(QMainWindow):
 
         self.audio_manager = None
 
-        self.file_nav_widget = FileNavigationWidget(self)
+        self.file_nav_widget = FileNavigationFrame(self)
         self.central_widget.addWidget(self.file_nav_widget)
+        self.sound_editor_widget = SoundEditorFrame(self)
+        self.central_widget.addWidget(self.sound_editor_widget)
 
     def scan_and_insert_metadata(self, directory):
         for root, dirs, files in os.walk(directory):
@@ -48,6 +51,13 @@ class MainWindow(QMainWindow):
         if self.audio_manager:
             self.audio_manager.stop()
         event.accept()
+
+    def show_file_nav_widget(self):
+        self.central_widget.setCurrentIndex(0)
+
+    def show_sound_editor_widget(self):
+        self.central_widget.setCurrentIndex(1)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
