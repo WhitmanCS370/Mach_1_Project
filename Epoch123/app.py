@@ -1,48 +1,45 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFrame, QHBoxLayout, QMessageBox
+from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget
 from PySide6.QtCore import QThread
-from PlotWidget import PlotWidget, AudioWorker
-
+import numpy as np
+import sys
+from AudioManager import AudioPlayer
+from FileNavigator import FileNavigator
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Epoch123 Audio Viewer")
         self.setMinimumSize(850, 650)
+        self.current_audio_path = None
 
-        # Setup GUI components
-        self.stack_widget = QStackedWidget(self)
-        self.setCentralWidget(self.stack_widget)
-        plot_frame = QFrame(self)
-        plot_frame.setLayout(QHBoxLayout())
-        self.stack_widget.addWidget(plot_frame)
+        # Initialize AudioPlayer with placeholder values
+        self.player = AudioPlayer('', 44100, np.array([]))
 
-        # Initialize the plot widget and add it to the layout
-        self.plot_widget = PlotWidget()
-        plot_frame.layout().addWidget(self.plot_widget)
+        # Create stack of widgets
+        self.stack = QStackedWidget()
+        self.setCentralWidget(self.stack)
 
-        # Thread and worker setup
-        audio_path = "/Users/uliraudales/Desktop/School/SoftwareDesign/Mach_1_Project/Epoch123/ESMD/bird.wav"
-        self.thread = QThread()
-        self.worker = AudioWorker(audio_path)
-        self.worker.moveToThread(self.thread)
-        self.worker.dataLoaded.connect(self.plot_widget.update_plot)
-        self.worker.errorOccurred.connect(self.show_error_message)
-        self.thread.started.connect(self.worker.process_audio)
-        self.thread.start()
+        # Create and manage file navigator with audio workers
+        self.file_navigator = FileNavigator()
+        self.stack.addWidget(self.file_navigator)
+
+        # Initialize audio workers dictionary if not initialized in FileNavigator
+        self.audio_workers = getattr(self.file_navigator, 'audio_workers', {})
 
     def closeEvent(self, event):
-        """Clean up threads before closing."""
-        self.thread.quit()
-        self.thread.wait()
+        """Cleanup threads before closing."""
+        try:
+            for thread, worker in list(self.audio_workers.values()):  # Convert to list if you are modifying the dictionary
+                if isinstance(thread, QThread) and thread.isRunning():
+                    thread.quit()
+                    thread.wait()
+        except Exception as e:
+            print(f"Failed to close threads properly: {e}")
         super().closeEvent(event)
-
-    def show_error_message(self, message):
-        """Display error messages from the worker thread."""
-        QMessageBox.critical(self, "Error", message)
 
 
 if __name__ == "__main__":
-    app = QApplication([])
+    app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
-    app.exec()
+    sys.exit(app.exec())

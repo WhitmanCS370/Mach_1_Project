@@ -1,37 +1,13 @@
 import numpy as np
-from PySide6.QtWidgets import QWidget, QMessageBox, QMenu, QVBoxLayout, QFileDialog
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtWidgets import QWidget, QMenu, QVBoxLayout, QFileDialog
 from PySide6.QtGui import QAction
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 from matplotlib.widgets import SpanSelector
-import librosa as lb
-from pydub import AudioSegment
 import soundfile as sf
 import logging
 import os
 
-class AudioWorker(QObject):
-    dataLoaded = Signal(np.ndarray, float, object)
-    errorOccurred = Signal(str)
-
-    def __init__(self, audio_path):
-        super().__init__()
-        self.audio_path = audio_path
-
-    def process_audio(self):
-        try:
-            data, samplerate = sf.read(self.audio_path)
-            # Suppose you still need the AudioSegment object:
-            audio_segment = AudioSegment(
-                data.tobytes(),
-                frame_rate=samplerate,
-                sample_width=data.dtype.itemsize,
-                channels=len(data.shape)
-            )
-            self.dataLoaded.emit(data, samplerate, audio_segment)
-        except Exception as e:
-            self.errorOccurred.emit(f"Error processing audio: {e}")
 
 class PlotWidget(QWidget):
     def __init__(self, parent=None):
@@ -70,7 +46,7 @@ class PlotWidget(QWidget):
         for axis in ['x', 'y']:
             self.ax.tick_params(axis=axis, colors='orange', direction='out')
         self.ax.grid(color='orange', linestyle='-', linewidth=0.25, alpha=0.5)
-        self.ax.set_axisbelow(True)
+        self.ax.set_axisbelow(False)
 
         self.position_line = self.ax.axvline(0, color='gray', lw=1, zorder=3)
 
