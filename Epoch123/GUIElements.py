@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QPushButton, QLineEdit, QSlider, QHBoxLayout, QLabel, QWidget, QVBoxLayout, QSizePolicy
+from PySide6.QtWidgets import QPushButton, QLineEdit, QSlider, QHBoxLayout, QLabel, QWidget, QSizePolicy
 from PySide6.QtCore import Qt
 
 class GuiWidget(QWidget):
