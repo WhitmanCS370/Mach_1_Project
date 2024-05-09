@@ -8,6 +8,7 @@ import logging
 from MetaData import MetaDataDB
 from pydub import AudioSegment
 from AudioManager import AudioPlayer
+from SoundEditor import SoundEditor
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -25,6 +26,9 @@ class MainWindow(QMainWindow):
         self.file_navigator = FileNavigator(self)
         self.stack.addWidget(self.file_navigator)
 
+        self.sound_editor = SoundEditor(self)
+        self.stack.addWidget(self.sound_editor)
+
     def scan_and_insert_metadata(self, directory):
         for root, dirs, files in os.walk(directory):
             for file in files:
@@ -39,6 +43,12 @@ class MainWindow(QMainWindow):
                         self.metaDataDB.insert_metadata(file, full_path, num_channels, sample_rate, file_size, duration)
                     except Exception as e:
                         logging.error(f"Failed to read or insert metadata for {file}: {e}")
+
+    def show_file_nav_widget(self):
+        self.stack.setCurrentIndex(0)
+
+    def show_sound_editor(self):
+        self.stack.setCurrentIndex(1)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

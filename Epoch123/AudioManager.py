@@ -4,7 +4,7 @@ import pygame as pg
 import os
 import tempfile
 import logging
-from PySide6.QtWidgets import QWidget, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QMessageBox
 from PySide6.QtCore import QObject, Signal, QThread, QTimer
 from pydub import AudioSegment
 from GUIElements import Button
@@ -132,6 +132,26 @@ class AudioPlayer(QThread):
             self.error.emit(str(e))
             logging.error(f"Error resuming audio: {e}")
 
+    def set_volume(self, volume):
+        try:
+            pg.mixer.music.set_volume(volume / 100)
+        except Exception as e:
+            self.error.emit(str(e))
+            logging.error(f"Error setting volume: {e}")
+            
+    def play_reverse(self):
+        try:
+            with tempfile.NamedTemporaryFile(suffix=".mp3", delete=True) as temp:
+                self.audio.reverse().export(temp.name, format="mp3")
+                pg.mixer.music.load(temp.name)
+                pg.mixer.music.play()
+            self.playing = True
+            self.start_time = time.time()
+        except Exception as e:
+            QMessageBox.critical(None, "Error", f"Error playing audio in reverse: {e}")
+            logging.error(f"Error playing audio in reverse: {e}")
+            raise
+
     def cleanup(self):
         if self.temp_file:
             os.unlink(self.temp_file.name)
@@ -161,3 +181,4 @@ class AudioControlWidget(QWidget):
     def create_button(self, label, func):
         button = Button(label, func, setFixedWidth=75)
         return button
+    

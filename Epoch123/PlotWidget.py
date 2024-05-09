@@ -67,7 +67,7 @@ class PlotWidget(QWidget):
         self.span_selector = SpanSelector(self.ax, self.on_select, 'horizontal', useblit=True, props=dict(alpha=0.3, facecolor='pink'))
 
 
-    def set_ticks(self, data, duration, data_length, xmin=None, xmax=None):
+    def set_ticks(self, duration, data_length, xmin=None, xmax=None):
         """Dynamically set the ticks based on the current zoom level or total data length."""
         if xmin is not None and xmax is not None:
             xticks = np.linspace(xmin, xmax, 10)  # Create 10 ticks within the zoomed range
@@ -101,7 +101,7 @@ class PlotWidget(QWidget):
 
         self.position_line.set_xdata([0])
         self.ax.set_xlim(0, len(data))
-        self.set_ticks(data, audio.duration_seconds, len(data))
+        self.set_ticks(audio.duration_seconds, len(data))
         self.canvas.draw_idle()
         self.reset_span_selector()
 
@@ -268,16 +268,28 @@ class PlotWidget(QWidget):
             self.clear_selection()
             self.update_plot(self.data, self.fs, self.audio)
 
+    def push_state(self, data):
+        # Save a copy of the data and current view limits
+        current_view = self.ax.get_xlim()
+        self.undo_stack.append((np.copy(data), current_view))
+        self.redo_stack.clear()  # Clear the redo stack whenever new changes are made
+
     def undo_last_action(self):
         if self.undo_stack:
-            last_state, last_view = self.undo_stack.pop()
-            self.redo_stack.append((np.copy(self.data), (self.ax.get_xlim())))  # Save current state before undo
-            self.data = last_state
-            self.update_plot(self.data, self.fs, self.audio)
-            # clear selection if any
-            self.clear_selection()
-            self.ax.set_xlim(last_view)  # Restore view limits
-            self.canvas.draw_idle()
+            try:
+                last_state, last_view = self.undo_stack.pop()
+                self.redo_stack.append((np.copy(self.data), self.ax.get_xlim()))  # Save current state before undo
+                self.data = last_state
+                self.ax.set_xlim(last_view)  # Restore view limits
+                self.update_plot(self.data, self.fs, self.audio)
+                self.canvas.draw_idle()
+            except ValueError as e:
+                logging.error(f"Failed to unpack undo stack: {e}")
+                # Optionally, add more diagnostics
+                logging.error(f"Current undo stack state: {self.undo_stack}")
+        else:
+            logging.info("Undo stack is empty")
+
 
     def redo_last_action(self):
         if self.redo_stack:

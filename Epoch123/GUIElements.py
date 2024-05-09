@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QPushButton, QLineEdit, QSlider, QHBoxLayout, QLabel, QWidget, QSizePolicy
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QPushButton, QLineEdit, QSlider, QHBoxLayout, QLabel, QWidget, QSizePolicy, QComboBox
+from PySide6.QtCore import Qt, Signal
 
 class GuiWidget(QWidget):
     """A horizontal layout with a label and a GUI element."""
@@ -57,6 +57,9 @@ class Button(QPushButton):
 
 class LineEdit(QLineEdit):
     """A custom QLineEdit with a specific style and optional fixed height and placeholder."""
+    # Define a custom signal that sends the text as a string
+    text_changed = Signal(str)
+
     def __init__(self, setFixedWidth=None, placeholder=None):
         super().__init__()
         styles = """QLineEdit { 
@@ -68,6 +71,9 @@ class LineEdit(QLineEdit):
             self.setFixedWidth(setFixedWidth)
         if placeholder:
             self.setPlaceholderText(placeholder)
+
+        # Connect the built-in textChanged signal to the custom signal
+        self.textChanged.connect(self.text_changed.emit)
 
 class Slider(QSlider):
     """A custom QSlider with a specific style and optional fixed width."""
@@ -96,3 +102,39 @@ class Slider(QSlider):
         self.setCursor(Qt.PointingHandCursor)
         if setFixedWidth:
             self.setFixedWidth(setFixedWidth)
+
+
+class CustomComboBox(QComboBox):
+    """A custom QComboBox with specific styling."""
+    def __init__(self, items=None):
+        super().__init__()
+        self.setStyleSheet("""
+            QComboBox {
+                background-color: #2C2C2C;
+                color: white;
+                border: 1px solid gray;
+                padding: 1px 18px 1px 3px;
+                min-width: 6em;
+            }
+            QComboBox::drop-down {
+                subcontrol-origin: padding;
+                subcontrol-position: top right;
+                width: 15px;
+                border-left-width: 1px;
+                border-left-color: darkgray;
+                border-left-style: solid;
+                border-top-right-radius: 3px;
+                border-bottom-right-radius: 3px;
+            }
+        """)
+        # Initialize items if provided
+        if items:
+            self.add_items(items)
+
+    def add_items(self, items):
+        """Add items to the combo box."""
+        self.addItems(items)
+
+    def set_on_change(self, callback):
+        """Set the callback for when the selected index changes."""
+        self.currentIndexChanged.connect(callback)

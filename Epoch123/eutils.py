@@ -25,10 +25,5 @@ def get_main_sound_dir_path(ext: str) -> str:
 
     return main_sound_dir
 
-def create_action(self, name, func):
-    action = QAction(name, self)
-    action.triggered.connect(func)
-    return action
-
 def show_error_message(self, message):
     QMessageBox.critical(self, "Error", message)
