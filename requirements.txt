@@ -6,3 +6,4 @@ librosa
 matplotlib
 pydub
 PySide6
+pygame
