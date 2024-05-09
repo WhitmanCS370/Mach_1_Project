@@ -1,3 +1,6 @@
+from PySide6.QtGui import QAction 
+from PySide6.QtWidgets import QMessageBox
+
 
 def get_main_sound_dir_path(ext: str) -> str:
     """
@@ -22,10 +25,10 @@ def get_main_sound_dir_path(ext: str) -> str:
 
     return main_sound_dir
 
-def is_valid_extension(file_name: str) -> bool:
-    """
-        Checks if the file has a valid extension
-        For the moment, only .wav files are supported
-    """
-    valid_extensions = ['.wav']
-    return any(file_name.endswith(ext) for ext in valid_extensions)
+def create_action(self, name, func):
+    action = QAction(name, self)
+    action.triggered.connect(func)
+    return action
+
+def show_error_message(self, message):
+    QMessageBox.critical(self, "Error", message)

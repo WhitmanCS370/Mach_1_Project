@@ -10,7 +10,7 @@ import os
 
 
 class PlotWidget(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, audio_player=None, parent=None):
         super().__init__(parent)
         self.figure, self.ax = plt.subplots()
         self.canvas = FigureCanvas(self.figure)
@@ -29,6 +29,11 @@ class PlotWidget(QWidget):
         self.undo_stack = []
         self.redo_stack = []
         self.data_stack = []
+
+        if audio_player:
+            self.audio_player = audio_player
+            self.audio_player.update_position.connect(self.update_position_line)
+            self.audio_player.playback_finished.connect(self.reset_position_line)
 
         # Set up the canvas layout
         layout = QVBoxLayout(self)
@@ -62,7 +67,7 @@ class PlotWidget(QWidget):
         self.span_selector = SpanSelector(self.ax, self.on_select, 'horizontal', useblit=True, props=dict(alpha=0.3, facecolor='pink'))
 
 
-    def set_ticks(self, duration, data_length, xmin=None, xmax=None):
+    def set_ticks(self, data, duration, data_length, xmin=None, xmax=None):
         """Dynamically set the ticks based on the current zoom level or total data length."""
         if xmin is not None and xmax is not None:
             xticks = np.linspace(xmin, xmax, 10)  # Create 10 ticks within the zoomed range
@@ -73,8 +78,9 @@ class PlotWidget(QWidget):
 
         time_labels[0] = ''  # Avoid overlapping the y-axis
         self.ax.set_xticks(xticks)
-        self.ax.set_xticklabels(time_labels, color='orange', fontsize=8, ha='left', va='bottom', y=0.01)
+        self.ax.set_xticklabels(time_labels, color='orange', fontsize=8, ha='left', va='bottom', y=0.03)
 
+        # get
         yticks = np.linspace(-1.6, 1.6, 15)
         self.ax.set_yticks(yticks)
         amplitude_labels = np.char.mod('%.1f', yticks)
@@ -95,7 +101,7 @@ class PlotWidget(QWidget):
 
         self.position_line.set_xdata([0])
         self.ax.set_xlim(0, len(data))
-        self.set_ticks(audio.duration_seconds, len(data))
+        self.set_ticks(data, audio.duration_seconds, len(data))
         self.canvas.draw_idle()
         self.reset_span_selector()
 
@@ -105,6 +111,26 @@ class PlotWidget(QWidget):
             xmin, xmax = self.selected_region
             if not (xmin <= event.xdata <= xmax):
                 self.clear_selection()
+            
+    def get_selected_segment(self):
+        if self.selected_region:
+            xmin, xmax = self.selected_region
+            return self.data[int(xmin):int(xmax)], xmin, xmax
+        return None, None, None
+
+    def update_position_line(self, position):
+        """Update the position line based on the current position in milliseconds."""
+        if self.fs and self.data is not None:
+            position_index = int(position / 1000 * self.fs)  # Convert milliseconds to index
+            if position_index <= len(self.data):
+                self.position_line.set_xdata([position_index, position_index])
+                self.canvas.draw_idle()
+
+    def reset_position_line(self):
+        """Reset the position line to the initial position of the selected region, or to zero."""
+        initial_position = int(self.selected_region[0]) if self.selected_region else 0
+        self.position_line.set_xdata([initial_position, initial_position])
+        self.canvas.draw_idle()
 
     def on_select(self, xmin, xmax):
         """Handle the selection of a region using SpanSelector."""
@@ -113,17 +139,27 @@ class PlotWidget(QWidget):
             if self.selection_rect:
                 self.selection_rect.remove()
             self.selection_rect = self.ax.axvspan(xmin, xmax, color='pink', alpha=0.3)
+
+            # Extract only the selected region from data
+            start_frame = int(xmin)
+            end_frame = int(xmax)
+            selected_segment = self.data[start_frame:end_frame]
+
+            # Pass the selected region's audio data to the audio player
+            self.audio_player.set_audio_data(selected_segment, self.fs)
+            self.audio_player.set_initial_frame(start_frame)
             self.position_line.set_xdata([xmin])
         else:
-            self.position_line.set_xdata([0])
+            self.clear_selection()
         self.canvas.draw_idle()
 
     def clear_selection(self):
-        """Clear the selection rectangle and reset the position line."""
+        """Clear the selection rectangle and reset the audio player."""
         if self.selection_rect:
             self.selection_rect.remove()
         self.selection_rect = None
         self.selected_region = None
+        self.audio_player.set_audio_data(self.data, self.fs)  # Reset audio data to full length
         self.position_line.set_xdata([0])
         self.canvas.draw_idle()
 

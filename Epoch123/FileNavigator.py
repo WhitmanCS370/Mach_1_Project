@@ -5,16 +5,16 @@ import tempfile
 from functools import lru_cache
 from pathlib import Path
 
-import soundfile as sf
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QFrame, QVBoxLayout, QLineEdit, QLabel, QFileSystemModel, QTreeView, QHBoxLayout, QMenu, QMessageBox, QWidget
 
 from pydub import AudioSegment
 from eutils import get_main_sound_dir_path
 from PlotWidget import PlotWidget
-from AudioManager import AudioWorker
+from AudioManager import AudioProcessor, AudioControlWidget
+from MetaData import MetaDataWidget
 from GUIElements import Button
+from eutils import create_action, show_error_message
 
 class CustomFileSystemModel(QFileSystemModel):
     def flags(self, index):
@@ -28,16 +28,16 @@ class CustomTreeView(QTreeView):
         super().__init__(parent)
         self.setStyleSheet("""
             QTreeView {
-                background-color: #151515; 
+                background-color: #151515;
                 color: white;
-                font-size: 14px;  /* Increase font size if needed */
+                font-size: 14px;
             }
             QTreeView::item {
-                height: 25px;  /* Increase the height of each row */
-                padding: 4px;  /* Padding inside each item */
+                height: 25px;
+                padding: 4px;
             }
             QTreeView::item:selected {
-                background-color: #574B90;  /* Background color for selected item */
+                background-color: #574B90;
             }
         """)
 
@@ -46,7 +46,6 @@ class CustomTreeView(QTreeView):
             return False
         editor = super().edit(index, trigger, event)
         if editor:
-            # Customize the QLineEdit used for editing
             line_edit = self.findChild(QLineEdit)
             if line_edit:
                 line_edit.setStyleSheet("QLineEdit { border: 2px solid orange; padding: 4px; }")
@@ -56,19 +55,23 @@ class FileNavigator(QFrame):
     MAX_WIDTH = 500
     MIN_WIDTH = 300
     SEARCH_STYLESHEET = "background-color: #151515; color: white; padding: 2px; border: 1px solid #151515; border-radius: 5px; font-size: 14px"
-    
+
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.parent = parent
         self.setStyleSheet("background-color: #232323")
         self.setLayout(QHBoxLayout())
         self.model = CustomFileSystemModel(self)
         self.model.setReadOnly(False)
-        self.plot_widget = PlotWidget(self)
         self.deleted_files = {}
         self.currently_selected_file = None
         self.root_path = get_main_sound_dir_path('Epoch123/ESMD')
         self.audio_workers = {}
         self.audio_cache = {}
+        self.plot_widget = PlotWidget(audio_player=self.parent.audio_player)
+        # audio_callbacks = [self.plot_widget.play_audio, self.plot_widget.stop_audio, self.plot_widget.pause_audio, self.plot_widget.resume_audio]
+        self.audio_controls_widget = AudioControlWidget(audio_player=self.parent.audio_player)
+        self.metadata_widget = MetaDataWidget(self.parent)
         self.setup_ui()
 
     def setup_ui(self):
@@ -89,7 +92,6 @@ class FileNavigator(QFrame):
         self.file_tree = CustomTreeView()
         self.file_tree.setMinimumWidth(self.MIN_WIDTH)
         self.file_tree.setMaximumWidth(self.MAX_WIDTH)
-        self.file_tree.setBaseSize(self.MIN_WIDTH, 0)
         self.file_tree.setModel(self.model)
         self.model.setRootPath(self.root_path)
         self.file_tree.setRootIndex(self.model.index(self.root_path))
@@ -107,74 +109,107 @@ class FileNavigator(QFrame):
         self.file_title.setAlignment(Qt.AlignCenter)
         info_widget.layout().addWidget(self.file_title)
         info_widget.layout().addWidget(self.plot_widget)
+        info_widget.layout().addWidget(self.audio_controls_widget)
+        info_widget.layout().addWidget(self.metadata_widget)
         info_widget.layout().addLayout(self.edit_buttons())
         self.plot_widget.hide()
+        self.audio_controls_widget.hide()
+        self.metadata_widget.hide()
         self.file_tree.clicked.connect(self.on_file_selected)
         self.file_tree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.file_tree.customContextMenuRequested.connect(self.show_context_menu)
         return info_widget
+    
+    def edit_buttons(self):
+        edit_buttons_layout = QHBoxLayout()
+        edit_buttons_layout.setSpacing(10)
+        edit_buttons_layout.setAlignment(Qt.AlignCenter)
+        edit_buttons_layout.addWidget(Button("Edit File", None))
+        edit_buttons_layout.addWidget(Button("Delete File", lambda: self.delete_file(self.model.filePath(self.file_tree.currentIndex()))))
+        return edit_buttons_layout
 
     @lru_cache(maxsize=50)
     def load_audio(self, file_path):
+        """ Updated to use the new audio processing logic. """
         self.current_audio_path = file_path
-        data, fs = sf.read(file_path)
-        return data[:, 0] if data.ndim > 1 else data, fs
-
-    def show_error_message(self, message):
-        QMessageBox.critical(self, "Error", message)
+        # Assume AudioProcessor is a part of a separate module or defined elsewhere
+        processor = AudioProcessor(file_path)
+        processor.data_loaded.connect(lambda data, fs, audio_segment: self.handle_data_loaded(data, fs, audio_segment, file_path))
+        processor.error_occurred.connect(show_error_message)
+        processor.process_audio()
+        return None  # Placeholder, actual data handled asynchronously
+    
+    def handle_data_loaded(self, data, fs, audio_segment, file_path):
+        """Handle the data loaded signal from AudioProcessor."""
+        if file_path not in self.audio_cache:
+            self.audio_cache[file_path] = (data, fs, audio_segment)
+        
+        fs = int(fs)  # Ensure fs is an integer
+        self.parent.audio_player.set_audio(audio_segment, data, fs, file_path)
+        self.plot_widget.update_plot(data, fs, audio_segment)
+        self.metadata_widget.update_metadata(file_path)
+        self.plot_widget.show()
+        self.metadata_widget.show()
+        # logging.info(f"Data loaded for {file_path}")
+        
+    def update_widgets(self, file_path, data=None, fs=None, audio=None):
+        """Update the plot and metadata widgets with the given data."""
+        self.plot_widget.update_plot(data, fs, audio)
+        self.metadata_widget.update_metadata(file_path)
+        self.plot_widget.show()
+        self.metadata_widget.show()
 
     def on_file_selected(self, index):
         file_path = self.model.filePath(index)
         if Path(file_path).is_dir():
-            # If it's a directory, expand or collapse it.
             if self.file_tree.isExpanded(index):
                 self.file_tree.collapse(index)
             else:
                 self.file_tree.expand(index)
-            return  # Do not update info layout when a folder is clicked.
-        
+            return
+
+        # Stop the current playing audio if any
+        self.audio_controls_widget.audio_player.stop()
+
         self.currently_selected_file = Path(file_path).name
         if not Path(file_path).is_file():
-            if self.plot_widget.isVisible():
-                self.plot_widget.hide()
+            self.plot_widget.hide()
+            self.audio_controls_widget.hide()
+            self.metadata_widget.hide()
             return
 
         self.file_title.setText(f"Selected File: {self.currently_selected_file}")
         self.plot_widget.show()
+        self.audio_controls_widget.show()
+        self.metadata_widget.show()
 
         try:
             if file_path not in self.audio_cache:
-                data, fs = self.load_audio(file_path)
-                audio = AudioSegment.from_file(file_path)
-                self.audio_cache[file_path] = (data, fs, audio)
+                self.load_audio(file_path)  # This is asynchronous
+            else:
+                data, fs, audio = self.audio_cache[file_path]
+                fs = int(fs)  # Ensure fs is an integer
+                self.parent.audio_player.set_audio(audio, data, fs, file_path)
+                self.update_widgets(file_path, data, fs, audio)
 
-            data, fs, audio = self.audio_cache[file_path]
-            self.plot_widget.clear_selection()
-            self.plot_widget.update_plot(data, fs, audio)
         except Exception as e:
             message = f"Error loading file '{file_path}': {e}"
-            self.show_error_message(message)
+            show_error_message(message)
             logging.error(message)
-
 
     def show_context_menu(self, position):
         index = self.file_tree.indexAt(position)
         context_menu = QMenu(self)
 
         if index.isValid():
-            context_menu.addAction(self.create_action('Rename', lambda: self.rename_file(index)))
-            context_menu.addAction(self.create_action('Delete', lambda: self.delete_file(self.model.filePath(index))))
-            context_menu.addAction(self.create_action('Create Folder', lambda: self.create_folder(index)))
+            context_menu.addAction(create_action('Rename', lambda: self.rename_file(index)))
+            context_menu.addAction(create_action('Delete', lambda: self.delete_file(self.model.filePath(index))))
+            context_menu.addAction(create_action('Create Folder', lambda: self.create_folder(index)))
         else:
-            context_menu.addAction(self.create_action('Undo Delete', self.undo_delete))
-            context_menu.addAction(self.create_action('Create Folder', self.create_folder))
+            context_menu.addAction(create_action('Undo Delete', self.undo_delete))
+            context_menu.addAction(create_action('Create Folder', self.create_folder))
 
         context_menu.exec_(self.file_tree.viewport().mapToGlobal(position))
-
-    def create_action(self, name, func):
-        action = QAction(name, self)
-        action.triggered.connect(func)
-        return action
 
     def refresh_view(self):
         self.model.setRootPath(self.root_path)
@@ -185,7 +220,6 @@ class FileNavigator(QFrame):
         temp_file_path = temp_dir / base_name
         counter = 1
 
-        # If the file already exists, add a counter suffix to the name
         while temp_file_path.exists():
             temp_file_path = temp_dir / f"{base_name} ({counter})"
             counter += 1
@@ -193,14 +227,22 @@ class FileNavigator(QFrame):
         return str(temp_file_path)
 
     def delete_file(self, file_path):
-        """Move the file to a temporary path for 'deletion'."""
+        """Move the file or directory to a temporary path for 'deletion'."""
         if Path(file_path).exists() and QMessageBox.question(self, 'Delete file', 'Are you sure you want to delete this file?', QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
             temp_file_path = self.get_unique_temp_path(Path(file_path).name)
             if Path(file_path).is_file():
                 shutil.move(file_path, temp_file_path)
+                self.audio_cache.pop(file_path, None)
+                self.audio_workers.pop(file_path, None)
+                self.parent.metaDataDB.delete_file(file_path)
             elif Path(file_path).is_dir():
-                shutil.rmtree(file_path)
-                os.mkdir(temp_file_path)
+                for root, _, files in os.walk(file_path):
+                    for file in files:
+                        abs_file_path = Path(root) / file
+                        self.audio_cache.pop(str(abs_file_path), None)
+                        self.audio_workers.pop(str(abs_file_path), None)
+                        self.parent.metaDataDB.delete_file(str(abs_file_path))
+                shutil.move(file_path, temp_file_path)
             self.deleted_files[temp_file_path] = file_path
             self.refresh_view()
 
@@ -210,25 +252,26 @@ class FileNavigator(QFrame):
             shutil.move(temp_file_path, original_file_path)
             self.refresh_view()
 
-    def get_parent_path(self, index):
-        if index and index.isValid():
-            file_path = Path(self.model.filePath(index))
-            return str(file_path.parent) if file_path.is_file() else str(file_path)
-        return self.root_path
-
     def rename_file(self, index):
-        if index and index.isValid():
-            file_path = Path(self.model.filePath(index))
-            new_name = self.file_tree.edit(index, QTreeView.EditKeyPressed, None)
-            if new_name:
-                new_path = file_path.parent / new_name
-                if file_path.is_file():
-                    shutil.move(file_path, new_path)
-                else:
-                    for root, dirs, files in os.walk(str(file_path)):
-                        for file in files:
-                            shutil.move(Path(root) / file, new_path)
-        self.refresh_view()
+        # if index and index.isValid():
+        #     old_path = Path(self.model.filePath(index))
+        #     self.file_tree.edit(index, QTreeView.EditKeyPressed, None)
+        #     new_name = self.model.data(index, Qt.DisplayRole)
+        #     if new_name:
+        #         new_path = old_path.parent / new_name
+        #         shutil.move(old_path, new_path)
+
+        #         if old_path.is_file():
+        #             self.parent.metaDataDB.rename_file(str(old_path), str(new_path))
+        #         else:
+        #             for root, _, files in os.walk(str(new_path)):
+        #                 for file in files:
+        #                     original_file_path = Path(root) / file
+        #                     relative_path = original_file_path.relative_to(new_path)
+        #                     new_file_path = new_path / relative_path
+        #                     self.parent.metaDataDB.rename_file(str(original_file_path), str(new_file_path))
+        # self.refresh_view()
+        pass
 
     def create_folder(self, index=None):
         parent_path = Path(self.get_parent_path(index))
@@ -239,23 +282,8 @@ class FileNavigator(QFrame):
         self.file_tree.setCurrentIndex(new_index)
         self.file_tree.edit(new_index, QTreeView.EditKeyPressed, None)
 
-    def edit_buttons(self):
-        edit_buttons_layout = QHBoxLayout()
-        edit_buttons_layout.setSpacing(10)
-        edit_buttons_layout.setAlignment(Qt.AlignCenter)
-        edit_buttons_layout.addWidget(Button("Edit File", self.go_to_sound_editor))
-        edit_buttons_layout.addWidget(Button("Delete File", lambda: self.delete_file(self.model.filePath(self.file_tree.currentIndex()))))
-        return edit_buttons_layout
-
-    def go_to_sound_editor(self):
-        if not self.currently_selected_file:
-            QMessageBox.warning(self, "No file selected", "Please select a file to edit")
-            return
-        try:
-            data, fs, audio = self.audio_cache[self.model.filePath(self.file_tree.currentIndex())]
-            self.plot_widget.clear_selection()
-            self.plot_widget.update_plot(data, fs, audio)
-        except Exception as e:
-            message = f"Error loading file '{self.model.filePath(self.file_tree.currentIndex())}': {e}"
-            self.show_error_message(message)
-            logging.error(message)
+    def get_parent_path(self, index):
+        if index and index.isValid():
+            file_path = Path(self.model.filePath(index))
+            return str(file_path.parent) if file_path.is_file() else str(file_path)
+        return self.root_path
