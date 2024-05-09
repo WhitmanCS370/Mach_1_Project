@@ -6,7 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QVBoxLayout, QLineEdit, QLabel, QFileSystemModel, QTreeView, QHBoxLayout, QMenu, QMessageBox, QWidget
+from PySide6.QtWidgets import QFrame, QVBoxLayout, QLineEdit, QLabel, QFileSystemModel, QTreeView, QHBoxLayout, QMenu, QMessageBox, QWidget, QFileDialog
 from PySide6.QtGui import QAction
 from eutils import get_main_sound_dir_path
 from PlotWidget import PlotWidget
@@ -14,6 +14,7 @@ from AudioManager import AudioProcessor, AudioControlWidget
 from MetaData import MetaDataWidget
 from GUIElements import Button
 from eutils import show_error_message
+from pydub import AudioSegment
 
 class CustomFileSystemModel(QFileSystemModel):
     def flags(self, index):
@@ -83,6 +84,9 @@ class FileNavigator(QFrame):
         self.search_bar.setMaximumWidth(self.MAX_WIDTH)
         self.search_bar.setStyleSheet(self.SEARCH_STYLESHEET)
         self.file_nav_layout.addWidget(self.search_bar)
+        self.upload_button = Button("Upload File", self.upload_file)
+        self.file_nav_layout.addWidget(self.upload_button)
+        self.search_bar.textChanged.connect(self.filter_files)
 
         self.setup_file_tree()
         self.info_widget = self.setup_info_widget()
@@ -119,6 +123,49 @@ class FileNavigator(QFrame):
         self.file_tree.customContextMenuRequested.connect(self.show_context_menu)
         return info_widget
     
+    def upload_file(self):
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.ExistingFiles)
+        file_paths, _ = file_dialog.getOpenFileNames(self, "Select File(s) to Upload")
+        if file_paths:
+            for file_path in file_paths:
+                destination_path = os.path.join(self.root_path, os.path.basename(file_path))
+                file = os.path.basename(destination_path)
+                shutil.copy(file_path, destination_path)
+                audio = AudioSegment.from_file(destination_path)
+                num_channels = audio.channels
+                sample_rate = audio.frame_rate
+                duration = round(audio.duration_seconds, 2)
+                file_size = round(os.path.getsize(destination_path) / 1024, 2)
+                # add file info to database
+                self.parent.metaDataDB.insert_metadata(file, destination_path, num_channels, sample_rate, file_size, duration)
+            self.refresh_view()
+    
+    def filter_files(self, keyword):
+        keyword = keyword.strip().lower()
+        if not keyword:
+            self.model.setRootPath(self.root_path)
+            return
+
+        search_path = self.root_path
+        filtered_files = []
+        for root, _, files in os.walk(search_path):
+            for file in files:
+                if keyword in file.lower():
+                    filtered_files.append(os.path.join(root, file))
+
+        self.model.setRootPath("") 
+        self.model.setRootPath(search_path)
+        self.file_tree.setRootIndex(self.model.index(search_path))
+        for col in range(1, 4):
+            self.file_tree.setColumnHidden(col, True)
+
+        for file in filtered_files:
+            index = self.model.index(file)
+            if index.isValid():
+                self.file_tree.expand(index.parent())
+                self.file_tree.setCurrentIndex(index)
+
     def edit_buttons(self):
         edit_buttons_layout = QHBoxLayout()
         edit_buttons_layout.setSpacing(10)
