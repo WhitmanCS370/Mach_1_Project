@@ -1,37 +1,15 @@
 # Mach 1 Team Project 
 
 ## Personal Sound Archive:
-CS370 semester long projet implementing sonic archive. Allows a user to upload various sounds, remix and edit sounds, organize sounds, and manage metadata associated with sounds. Sounds must end in a .wav extension.
+CS370 semester long project implementing sonic archive. Allows a user to upload various sounds, remix and edit sounds, organize sounds, and manage metadata associated with sounds. Sounds must end in a .wav extension.
 
 ## Instructions to Run
+First, make sure all modules are installed. A list of required modules can be found in requirements.txt.
+Then enter the following command in the terminal to run the program.
 ```python
-COMMANDS = {
-  "-h or --help": "Prints all the available commands",
-  "-l or --list": "Lists all the available sounds",
-  "-p or --play (-sm or -sq) <sounds>": "Plays a sound file, -sm plays multiple sounds at the same time, -sq plays sounds sequentially",
-  "-r or --rename <sound> <new_name>": "Renames a sound file",
-  "-rand <sound>": "Play a random snippet of a sound file",
-  "-speed (-fast or -slow) <sound>": "Plays a sound, -fast plays sound at double speed, -slow plays sound at half speed",
-  "-rev":"Plays a sound file in reverse"
-}
+python3 Epoch123/app.py
 ```
 
-## How to use CLI
-
-Run the following command if you want a list of all commands
-```
-python sound_cli.py -h
-```
-
-Run the following command if you want to list all files in a given directory
-
-```
-python sound_cli.py -l sounds
-```
-### Example Usage to play sound
-```
-python sound_cli.py -p <sounds folder>/<sound>.wav
-```
 # Epoch 1
 
 ## Team Members Roles
@@ -64,7 +42,10 @@ Implementing visualize_audiowas the hardest to implement and the one we struggle
 # Epoch 3
 
 ## Team Member Roles
-- Uli: Impalmentation part 2, further editing and features of the GUI.
-- Molly:Implementation part 1, basic of the GUI
-- Marlyn:Requirements and use cases. Documentation
-- Clara: Requirements and use cases. Tested the GUI
+- Uli: Impelmentation part 2, further editing and features of the GUI.
+- Molly: Implementation part 1, basic of the GUI
+- Marlyn: Requirements and use cases. Documentation
+- Clara: Implementation of file navigation and GUI testing. Requirements and use cases.
+
+Reflection
+The main challenge of Epoch 3 was implementing the GUI. We inititally tried to implement it with tkinter, but quickly ran into issues with integrating functionality. We were able to address this problem by switching to PySide, which opened up a lot more opportunitites for implementing interesting features such as the waveform. Next steps for the project is to fully integrate audio tags and descriptions into our GUI.
